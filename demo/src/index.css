@@ -1,0 +1,102 @@
+body {
+    font-family: sans-serif;
+    background: #242424;
+    color: #AAA;
+}
+
+.title {
+    text-align: center;
+}
+
+.content-container {
+    max-width: 700px;
+    width: 80%;
+    margin: auto;
+}
+
+.description {
+    margin-bottom: 10px;
+}
+
+.block {
+    padding: 15px;
+    border: 3px solid #666;
+    margin: 20px 0;
+}
+
+.scrubber .bar {
+    top: 50%;
+}
+
+.scrubber.labelled .bar {
+    height: 40px;
+}
+
+.scrubber.labelled .bar::before {
+    position: absolute;
+    bottom: -40px;
+    font-size: 16px;
+    right: 10%;
+    height: 50px;
+    padding-right: 6px;
+    content: '.bar';
+    border-right: 2px solid #666;
+    line-height: 0.8;
+    display: flex;
+    align-items: flex-end;
+}
+
+.scrubber.labelled .bar__thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+}
+
+.scrubber.labelled .bar::after {
+    position: absolute;
+    bottom: -40px;
+    font-size: 16px;
+    right: 60%;
+    height: 50px;
+    padding-right: 6px;
+    content: '.bar__thumb';
+    border-right: 2px solid #666;
+    line-height: 0.8;
+    display: flex;
+    align-items: flex-end;
+}
+
+.scrubber.labelled .bar__buffer::before {
+    position: absolute;
+    bottom: -40px;
+    font-size: 16px;
+    right: 10%;
+    height: 50px;
+    padding-right: 6px;
+    content: '.bar__buffer';
+    border-right: 2px solid #666;
+    line-height: 0.8;
+    display: flex;
+    align-items: flex-end;
+}
+
+.scrubber.labelled .bar__progress::before {
+    position: absolute;
+    bottom: -40px;
+    font-size: 16px;
+    right: 50%;
+    height: 50px;
+    padding-right: 6px;
+    content: '.bar__progress';
+    border-right: 2px solid #666;
+    line-height: 0.8;
+    display: flex;
+    align-items: flex-end;
+}
+
+.data {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    text-align: center;
+    margin: 10px 0;
+}

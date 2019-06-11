@@ -2,6 +2,7 @@ import React, { Component, createRef } from 'react';
 import './scrubber.css';
 
 const clamp = (min: number, max: number, val: number): number => Math.min(Math.max(min, val), max);
+const round = (val: number, dp: number) => parseFloat(val.toFixed(dp));
 
 export type ScrubberProps = {
     className?: string,
@@ -58,8 +59,8 @@ export class Scrubber extends Component<ScrubberProps> {
         const { left, width } = barDomNode.getBoundingClientRect();
         const cursorX = typeof touchX === 'number' ? touchX : mouseX || 0;
         const clampedX = clamp(left, left + width, cursorX);
-        const decimal = ((clampedX - left) / width).toFixed(7);
-        return (max - min) * parseFloat(decimal);
+        const decimal = round((clampedX - left) / width, 7);
+        return round((max - min) * decimal, 7);
     }
 
     handleMouseMove = (e: MouseEvent) => {
