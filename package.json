@@ -1,0 +1,44 @@
+{
+    "name": "react-scrubber",
+    "version": "0.1.0",
+    "description": "React scrubber component with touch controls, styling, and lots event handlers",
+    "main": "./dist/index.js",
+    "scripts": {
+        "build": "babel src --presets @babel/preset-react --plugins @babel/plugin-proposal-class-properties --out-dir dist --copy-files",
+        "prepublish": "yarn build",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/nick-michael/react-scrubber.git"
+    },
+    "keywords": [
+        "react",
+        "react-component",
+        "slider",
+        "scrubber",
+        "input",
+        "range"
+    ],
+    "author": "nick-michael",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/nick-michael/react-scrubber/issues"
+    },
+    "files": [
+        "dist"
+    ],
+    "homepage": "https://github.com/nick-michael/react-scrubber#readme",
+    "devDependencies": {
+        "@babel/cli": "^7.4.4",
+        "@babel/core": "^7.4.5",
+        "@babel/plugin-proposal-class-properties": "^7.4.4",
+        "@babel/preset-react": "^7.0.0",
+        "react": "^16.0.0",
+        "react-dom": "^16.0.0"
+    },
+    "peerDependencies": {
+        "react": "^16.0.0",
+        "react-dom": "^16.0.0"
+    }
+}
