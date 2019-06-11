@@ -25656,27 +25656,33 @@ if(false) {}
 
 "use strict";
 
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_dom_1 = __importDefault(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
 const react_scrubber_1 = __webpack_require__(/*! react-scrubber */ "./node_modules/react-scrubber/lib/index.js");
 __webpack_require__(/*! ./index.css */ "./src/index.css");
-class App extends react_1.default.Component {
+class App extends react_1.Component {
     constructor() {
         super(...arguments);
         this.state = {
-            scrubbing: false,
             value: 50,
             state: 'None',
         };
         this.handleScrubStart = (value) => {
-            this.setState({ scrubbing: true, value, state: 'Scrub Start' });
+            this.setState({ value, state: 'Scrub Start' });
         };
         this.handleScrubEnd = (value) => {
-            this.setState({ scrubbing: false, value, state: 'Scrub End' });
+            this.setState({ value, state: 'Scrub End' });
         };
         this.handleScrubChange = (value) => {
             this.setState({ value, state: 'Scrub Change' });

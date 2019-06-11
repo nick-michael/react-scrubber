@@ -1,22 +1,21 @@
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Scrubber } from 'react-scrubber';
 
 import './index.css';
 
-class App extends React.Component {
+class App extends Component {
     state = {
-        scrubbing: false,
         value: 50,
         state: 'None',
     }
 
     handleScrubStart = (value: number) => {
-        this.setState({ scrubbing: true, value, state: 'Scrub Start' });
+        this.setState({ value, state: 'Scrub Start' });
     }
 
     handleScrubEnd = (value: number) => {
-        this.setState({ scrubbing: false, value, state: 'Scrub End' });
+        this.setState({ value, state: 'Scrub End' });
     }
 
     handleScrubChange = (value: number) => {
