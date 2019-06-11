@@ -1,11 +1,32 @@
 import React, { Component, createRef } from 'react';
 import './scrubber.css';
 
-const clamp = (min, max, val) => Math.min(Math.max(min, val), max);
+const clamp = (min: number, max: number, val: number): number => Math.min(Math.max(min, val), max);
 
-export class Scrubber extends Component {
-    barRef = createRef();
-    state = {
+export type ScrubberProps = {
+    className?: string,
+    value: number;
+    min: number;
+    max: number;
+    bufferPosition?: number;
+    onScrubStart?: (value: number) => void;
+    onScrubEnd?: (value: number) => void;
+    onScrubChange?: (value: number) => void;
+};
+
+type Nullable<T> = T | null;
+
+type ScrubberState = {
+    seeking: boolean;
+    mouseX: Nullable<number>;
+    touchId: Nullable<number>;
+    touchX: Nullable<number>;
+    hover: boolean;
+};
+
+export class Scrubber extends Component<ScrubberProps> {
+    barRef = createRef<HTMLDivElement>();
+    state: ScrubberState = {
         seeking: false,
         mouseX: null,
         touchId: null,
@@ -27,59 +48,71 @@ export class Scrubber extends Component {
         window.removeEventListener('touchend', this.handleTouchEnd);
     }
 
-    getPositionFromMouseX = () => {
+    getPositionFromMouseX = (): number => {
+        const barDomNode = this.barRef.current;
+        if (!barDomNode) {
+            return 0;
+        }
         const { min, max } = this.props;
         const { mouseX, touchX } = this.state;
-        const { x, width } = this.barRef.current.getBoundingClientRect();
+        const { left, width } = barDomNode.getBoundingClientRect();
         const cursorX = typeof touchX === 'number' ? touchX : mouseX || 0;
-        const clampedX = clamp(x, x + width, cursorX);
-        const decimal = ((clampedX - x) / width).toFixed(7);
-        return (max - min) * decimal;
+        const clampedX = clamp(left, left + width, cursorX);
+        const decimal = ((clampedX - left) / width).toFixed(7);
+        return (max - min) * parseFloat(decimal);
     }
 
-    handleMouseMove = e => {
+    handleMouseMove = (e: MouseEvent) => {
         this.setState({ mouseX: e.pageX }, () => {
-            if (this.state.seeking) {
+            if (this.state.seeking && this.props.onScrubChange) {
                 this.props.onScrubChange(this.getPositionFromMouseX());
             }
         });
     }
 
-    handleTouchMove = e => {
+    handleTouchMove = (e: TouchEvent) => {
         const touch = Array.from(e.changedTouches).find(t => t.identifier === this.state.touchId);
         if (touch) {
             this.setState({ touchX: touch.pageX }, () => {
-                if (this.state.seeking) {
+                if (this.state.seeking && this.props.onScrubChange) {
                     this.props.onScrubChange(this.getPositionFromMouseX());
                 }
             });
         }
     }
 
-    handleSeekStart = e => {
+    handleSeekStart = (e: React.MouseEvent<HTMLDivElement>) => {
         this.setState({ seeking: true, mouseX: e.pageX }, () => {
-            this.props.onScrubStart(this.getPositionFromMouseX());
+            if (this.props.onScrubStart) {
+                this.props.onScrubStart(this.getPositionFromMouseX());
+            }
         });
     }
 
-    handleTouchStart = e => {
+    handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
         const touch = e.changedTouches[0];
         this.setState({ hover: true, seeking: true, touchId: touch.identifier, touchX: touch.pageX }, () => {
-            this.props.onScrubStart(this.getPositionFromMouseX());
+            if (this.props.onScrubStart) {
+                this.props.onScrubStart(this.getPositionFromMouseX());
+            }
         });
     }
 
     handleSeekEnd = () => {
         if (this.state.seeking) {
-            this.props.onScrubEnd(this.getPositionFromMouseX());
+            if (this.props.onScrubEnd) {
+                this.props.onScrubEnd(this.getPositionFromMouseX());
+            }
             this.setState({ seeking: false, mouseX: null  });
         }
     }
 
-    handleTouchEnd = e => {
+    handleTouchEnd = (e: TouchEvent) => {
         const touch = Array.from(e.changedTouches).find(t => t.identifier === this.state.touchId);
         if (touch && this.state.seeking) {
-            this.props.onScrubEnd(this.getPositionFromMouseX());
+            if (this.props.onScrubEnd) {
+                this.props.onScrubEnd(this.getPositionFromMouseX());
+            }
             this.setState({ hover: false, seeking: false, touchX: null, touchId: null });
         }
     }
