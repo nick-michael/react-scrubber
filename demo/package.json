@@ -19,6 +19,6 @@
         "webpack-dev-server": "^3.7.1"
     },
     "dependencies": {
-        "react-scrubber": "^0.2.4"
+        "react-scrubber": "../"
     }
 }

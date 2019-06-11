@@ -3069,10 +3069,8 @@ react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
   integrity sha512-aUk3bHfZ2bRSVFFbbeVS4i+lNPZr3/WM5jT2J5omUVV1zzcs1nAaf3l51ctA5FFvCRbhrH0bdAsRRQddFJZPtA==
 
-react-scrubber@^0.2.4:
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/react-scrubber/-/react-scrubber-0.2.4.tgz#e53cd1c6bf1d227c0115dd2c05973e19bd427ab5"
-  integrity sha512-XSaBOS+04WLu9q/X4GuNM5tFgw8spy/8ZXj3nVzuE1Lbz1ObzzFFSmwOjTOhR2XysSDzF86Jzw7uMrTKgI141w==
+react-scrubber@../:
+  version "0.2.5"
 
 react@^16.0.0:
   version "16.8.6"
