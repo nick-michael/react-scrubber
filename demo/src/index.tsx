@@ -25,8 +25,28 @@ class App extends Component {
     render() {
         return (
             <div>
+                <a className="github-link" href="https://github.com/nick-michael/react-scrubber" target="blank">
+                    View Source Code &amp; Readme On Github
+                </a>
                 <h1 className="title">Welcome To React Scrubber!</h1>
                 <div className="content-container">
+                    <div className="scrubber-container" style={{ height: '20px' }}>
+                        <Scrubber
+                            min={0}
+                            max={100}
+                            value={this.state.value}
+                            onScrubStart={this.handleScrubStart}
+                            onScrubEnd={this.handleScrubEnd}
+                            onScrubChange={this.handleScrubChange}
+                            test={true}
+                            className="hi"
+                        />
+                    </div>
+                    <div className="data">
+                        <div className="data__state">State: {this.state.state}</div>
+                        <div className="data__value">Value: {this.state.value}</div>
+                    </div>
+                    <br />
                     <div className="block">
                         <div className="description">The scrubber has default styling applied to it, here's what it looks like to start with!</div>
                         <div className="scrubber-container" style={{ height: '20px' }}>
@@ -79,26 +99,6 @@ class App extends Component {
                             />
                         </div>
                         <br />
-                    </div>
-                    <div className="block">
-                        <div className="description">
-                            All the elements have class names so the style can be overriden. You can also pass down a class name into the className prop.
-                            <br /><br />The scrubber will also have a 'hover' class applied on mouse enter and on touch.
-                        </div>
-                        <div className="scrubber-container" style={{ height: '20px' }}>
-                            <Scrubber
-                                min={0}
-                                max={100}
-                                value={this.state.value}
-                                onScrubStart={this.handleScrubStart}
-                                onScrubEnd={this.handleScrubEnd}
-                                onScrubChange={this.handleScrubChange}
-                            />
-                        </div>
-                        <div className="data">
-                            <div className="data__state">State: {this.state.state}</div>
-                            <div className="data__value">Value: {this.state.value}</div>
-                        </div>
                     </div>
                 </div>
             </div>

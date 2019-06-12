@@ -13,6 +13,7 @@ export type ScrubberProps = {
     onScrubStart?: (value: number) => void;
     onScrubEnd?: (value: number) => void;
     onScrubChange?: (value: number) => void;
+    [key: string]: any;
 };
 
 type Nullable<T> = T | null;
@@ -38,14 +39,14 @@ export class Scrubber extends Component<ScrubberProps> {
     componentDidMount() {
         window.addEventListener('mousemove', this.handleMouseMove);
         window.addEventListener('mouseup', this.handleSeekEnd);
-        window.addEventListener('touchmove',this.handleTouchMove);
+        window.addEventListener('touchmove', this.handleTouchMove);
         window.addEventListener('touchend', this.handleTouchEnd);
     }
 
     componentWillUnmount() {
         window.removeEventListener('mousemove', this.handleMouseMove);
         window.removeEventListener('mouseup', this.handleSeekEnd);
-        window.removeEventListener('touchmove',this.handleTouchMove);
+        window.removeEventListener('touchmove', this.handleTouchMove);
         window.removeEventListener('touchend', this.handleTouchEnd);
     }
 
@@ -129,12 +130,13 @@ export class Scrubber extends Component<ScrubberProps> {
 
         return (
             <div
-                className={classes.join(' ')}
                 onMouseDown={this.handleSeekStart}
                 onTouchStart={this.handleTouchStart}
                 onTouchEnd={e => e.preventDefault()}
                 onMouseOver={() => this.setState({ hover: true })}
                 onMouseLeave={() => this.setState({ hover: false })}
+                {...this.props}
+                className={classes.join(' ')}
             >
                 <div className="bar" ref={this.barRef}>
                     <div className="bar__buffer" style={{ width: `${bufferPercent}%` }} />

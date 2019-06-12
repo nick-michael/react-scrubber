@@ -8,6 +8,15 @@ body {
     text-align: center;
 }
 
+.github-link {
+    text-align: center;
+    text-decoration: none;
+    color: #019AFD;
+    font-weight: bolder;
+    display: block;
+    margin-top: 20px;
+}
+
 .content-container {
     max-width: 700px;
     width: 80%;

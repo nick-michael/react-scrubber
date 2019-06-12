@@ -109,7 +109,7 @@ exports.push([module.i, ".scrubber {\n    width: 100%;\n    height: 100%;\n    p
 
 exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, "body {\r\n    font-family: sans-serif;\r\n    background: #242424;\r\n    color: #AAA;\r\n}\r\n\r\n.title {\r\n    text-align: center;\r\n}\r\n\r\n.content-container {\r\n    max-width: 700px;\r\n    width: 80%;\r\n    margin: auto;\r\n}\r\n\r\n.description {\r\n    margin-bottom: 10px;\r\n}\r\n\r\n.block {\r\n    padding: 15px;\r\n    border: 3px solid #666;\r\n    margin: 20px 0;\r\n}\r\n\r\n.scrubber .bar {\r\n    top: 50%;\r\n}\r\n\r\n.scrubber.labelled .bar {\r\n    height: 40px;\r\n}\r\n\r\n.scrubber.labelled .bar::before {\r\n    position: absolute;\r\n    bottom: -40px;\r\n    font-size: 16px;\r\n    right: 10%;\r\n    height: 50px;\r\n    padding-right: 6px;\r\n    content: '.bar';\r\n    border-right: 2px solid #666;\r\n    line-height: 0.8;\r\n    display: flex;\r\n    align-items: flex-end;\r\n}\r\n\r\n.scrubber.labelled .bar__thumb {\r\n    width: 60px;\r\n    height: 60px;\r\n    border-radius: 30px;\r\n}\r\n\r\n.scrubber.labelled .bar::after {\r\n    position: absolute;\r\n    bottom: -40px;\r\n    font-size: 16px;\r\n    right: 60%;\r\n    height: 50px;\r\n    padding-right: 6px;\r\n    content: '.bar__thumb';\r\n    border-right: 2px solid #666;\r\n    line-height: 0.8;\r\n    display: flex;\r\n    align-items: flex-end;\r\n}\r\n\r\n.scrubber.labelled .bar__buffer::before {\r\n    position: absolute;\r\n    bottom: -40px;\r\n    font-size: 16px;\r\n    right: 10%;\r\n    height: 50px;\r\n    padding-right: 6px;\r\n    content: '.bar__buffer';\r\n    border-right: 2px solid #666;\r\n    line-height: 0.8;\r\n    display: flex;\r\n    align-items: flex-end;\r\n}\r\n\r\n.scrubber.labelled .bar__progress::before {\r\n    position: absolute;\r\n    bottom: -40px;\r\n    font-size: 16px;\r\n    right: 50%;\r\n    height: 50px;\r\n    padding-right: 6px;\r\n    content: '.bar__progress';\r\n    border-right: 2px solid #666;\r\n    line-height: 0.8;\r\n    display: flex;\r\n    align-items: flex-end;\r\n}\r\n\r\n.data {\r\n    display: grid;\r\n    grid-template-columns: 50% 50%;\r\n    text-align: center;\r\n    margin: 10px 0;\r\n}\r\n", ""]);
+exports.push([module.i, "body {\r\n    font-family: sans-serif;\r\n    background: #242424;\r\n    color: #AAA;\r\n}\r\n\r\n.title {\r\n    text-align: center;\r\n}\r\n\r\n.github-link {\r\n    text-align: center;\r\n    text-decoration: none;\r\n    color: #019AFD;\r\n    font-weight: bolder;\r\n    display: block;\r\n    margin-top: 20px;\r\n}\r\n\r\n.content-container {\r\n    max-width: 700px;\r\n    width: 80%;\r\n    margin: auto;\r\n}\r\n\r\n.description {\r\n    margin-bottom: 10px;\r\n}\r\n\r\n.block {\r\n    padding: 15px;\r\n    border: 3px solid #666;\r\n    margin: 20px 0;\r\n}\r\n\r\n.scrubber .bar {\r\n    top: 50%;\r\n}\r\n\r\n.scrubber.labelled .bar {\r\n    height: 40px;\r\n}\r\n\r\n.scrubber.labelled .bar::before {\r\n    position: absolute;\r\n    bottom: -40px;\r\n    font-size: 16px;\r\n    right: 10%;\r\n    height: 50px;\r\n    padding-right: 6px;\r\n    content: '.bar';\r\n    border-right: 2px solid #666;\r\n    line-height: 0.8;\r\n    display: flex;\r\n    align-items: flex-end;\r\n}\r\n\r\n.scrubber.labelled .bar__thumb {\r\n    width: 60px;\r\n    height: 60px;\r\n    border-radius: 30px;\r\n}\r\n\r\n.scrubber.labelled .bar::after {\r\n    position: absolute;\r\n    bottom: -40px;\r\n    font-size: 16px;\r\n    right: 60%;\r\n    height: 50px;\r\n    padding-right: 6px;\r\n    content: '.bar__thumb';\r\n    border-right: 2px solid #666;\r\n    line-height: 0.8;\r\n    display: flex;\r\n    align-items: flex-end;\r\n}\r\n\r\n.scrubber.labelled .bar__buffer::before {\r\n    position: absolute;\r\n    bottom: -40px;\r\n    font-size: 16px;\r\n    right: 10%;\r\n    height: 50px;\r\n    padding-right: 6px;\r\n    content: '.bar__buffer';\r\n    border-right: 2px solid #666;\r\n    line-height: 0.8;\r\n    display: flex;\r\n    align-items: flex-end;\r\n}\r\n\r\n.scrubber.labelled .bar__progress::before {\r\n    position: absolute;\r\n    bottom: -40px;\r\n    font-size: 16px;\r\n    right: 50%;\r\n    height: 50px;\r\n    padding-right: 6px;\r\n    content: '.bar__progress';\r\n    border-right: 2px solid #666;\r\n    line-height: 0.8;\r\n    display: flex;\r\n    align-items: flex-end;\r\n}\r\n\r\n.data {\r\n    display: grid;\r\n    grid-template-columns: 50% 50%;\r\n    text-align: center;\r\n    margin: 10px 0;\r\n}\r\n", ""]);
 
 
 /***/ }),
@@ -21812,6 +21812,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -21922,7 +21933,7 @@ var Scrubber = /** @class */ (function (_super) {
             classes.push('hover');
         if (className)
             classes.push(className);
-        return (react_1.default.createElement("div", { className: classes.join(' '), onMouseDown: this.handleSeekStart, onTouchStart: this.handleTouchStart, onTouchEnd: function (e) { return e.preventDefault(); }, onMouseOver: function () { return _this.setState({ hover: true }); }, onMouseLeave: function () { return _this.setState({ hover: false }); } },
+        return (react_1.default.createElement("div", __assign({ onMouseDown: this.handleSeekStart, onTouchStart: this.handleTouchStart, onTouchEnd: function (e) { return e.preventDefault(); }, onMouseOver: function () { return _this.setState({ hover: true }); }, onMouseLeave: function () { return _this.setState({ hover: false }); } }, this.props, { className: classes.join(' ') }),
             react_1.default.createElement("div", { className: "bar", ref: this.barRef },
                 react_1.default.createElement("div", { className: "bar__buffer", style: { width: bufferPercent + "%" } }),
                 react_1.default.createElement("div", { className: "bar__progress", style: { width: valuePercent + "%" } }),
@@ -27860,8 +27871,19 @@ class App extends react_1.Component {
     }
     render() {
         return (react_1.default.createElement("div", null,
+            react_1.default.createElement("a", { className: "github-link", href: "https://github.com/nick-michael/react-scrubber", target: "blank" }, "View Source Code & Readme On Github"),
             react_1.default.createElement("h1", { className: "title" }, "Welcome To React Scrubber!"),
             react_1.default.createElement("div", { className: "content-container" },
+                react_1.default.createElement("div", { className: "scrubber-container", style: { height: '20px' } },
+                    react_1.default.createElement(react_scrubber_1.Scrubber, { min: 0, max: 100, value: this.state.value, onScrubStart: this.handleScrubStart, onScrubEnd: this.handleScrubEnd, onScrubChange: this.handleScrubChange, test: true, className: "hi" })),
+                react_1.default.createElement("div", { className: "data" },
+                    react_1.default.createElement("div", { className: "data__state" },
+                        "State: ",
+                        this.state.state),
+                    react_1.default.createElement("div", { className: "data__value" },
+                        "Value: ",
+                        this.state.value)),
+                react_1.default.createElement("br", null),
                 react_1.default.createElement("div", { className: "block" },
                     react_1.default.createElement("div", { className: "description" }, "The scrubber has default styling applied to it, here's what it looks like to start with!"),
                     react_1.default.createElement("div", { className: "scrubber-container", style: { height: '20px' } },
@@ -27884,22 +27906,7 @@ class App extends react_1.Component {
                         "The scrubber will also have a 'hover' class applied on mouse enter and on touch."),
                     react_1.default.createElement("div", { className: "scrubber-container", style: { height: '80px' } },
                         react_1.default.createElement(react_scrubber_1.Scrubber, { className: "labelled", min: 0, max: 100, value: 40, bufferPosition: 75 })),
-                    react_1.default.createElement("br", null)),
-                react_1.default.createElement("div", { className: "block" },
-                    react_1.default.createElement("div", { className: "description" },
-                        "All the elements have class names so the style can be overriden. You can also pass down a class name into the className prop.",
-                        react_1.default.createElement("br", null),
-                        react_1.default.createElement("br", null),
-                        "The scrubber will also have a 'hover' class applied on mouse enter and on touch."),
-                    react_1.default.createElement("div", { className: "scrubber-container", style: { height: '20px' } },
-                        react_1.default.createElement(react_scrubber_1.Scrubber, { min: 0, max: 100, value: this.state.value, onScrubStart: this.handleScrubStart, onScrubEnd: this.handleScrubEnd, onScrubChange: this.handleScrubChange })),
-                    react_1.default.createElement("div", { className: "data" },
-                        react_1.default.createElement("div", { className: "data__state" },
-                            "State: ",
-                            this.state.state),
-                        react_1.default.createElement("div", { className: "data__value" },
-                            "Value: ",
-                            this.state.value))))));
+                    react_1.default.createElement("br", null)))));
     }
 }
 react_dom_1.default.render(react_1.default.createElement(App, null), document.getElementById('root'));
