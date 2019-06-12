@@ -126,6 +126,7 @@ export class Scrubber extends Component<ScrubberProps> {
 
         const classes = ['scrubber'];
         if (this.state.hover) classes.push('hover');
+        if (this.state.seeking) classes.push('seeking');
         if (className) classes.push(className);
 
         return (

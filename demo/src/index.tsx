@@ -38,8 +38,6 @@ class App extends Component {
                             onScrubStart={this.handleScrubStart}
                             onScrubEnd={this.handleScrubEnd}
                             onScrubChange={this.handleScrubChange}
-                            test={true}
-                            className="hi"
                         />
                     </div>
                     <div className="data">

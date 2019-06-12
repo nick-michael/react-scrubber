@@ -21931,6 +21931,8 @@ var Scrubber = /** @class */ (function (_super) {
         var classes = ['scrubber'];
         if (this.state.hover)
             classes.push('hover');
+        if (this.state.seeking)
+            classes.push('seeking');
         if (className)
             classes.push(className);
         return (react_1.default.createElement("div", __assign({ onMouseDown: this.handleSeekStart, onTouchStart: this.handleTouchStart, onTouchEnd: function (e) { return e.preventDefault(); }, onMouseOver: function () { return _this.setState({ hover: true }); }, onMouseLeave: function () { return _this.setState({ hover: false }); } }, this.props, { className: classes.join(' ') }),
@@ -27875,7 +27877,7 @@ class App extends react_1.Component {
             react_1.default.createElement("h1", { className: "title" }, "Welcome To React Scrubber!"),
             react_1.default.createElement("div", { className: "content-container" },
                 react_1.default.createElement("div", { className: "scrubber-container", style: { height: '20px' } },
-                    react_1.default.createElement(react_scrubber_1.Scrubber, { min: 0, max: 100, value: this.state.value, onScrubStart: this.handleScrubStart, onScrubEnd: this.handleScrubEnd, onScrubChange: this.handleScrubChange, test: true, className: "hi" })),
+                    react_1.default.createElement(react_scrubber_1.Scrubber, { min: 0, max: 100, value: this.state.value, onScrubStart: this.handleScrubStart, onScrubEnd: this.handleScrubEnd, onScrubChange: this.handleScrubChange })),
                 react_1.default.createElement("div", { className: "data" },
                     react_1.default.createElement("div", { className: "data__state" },
                         "State: ",
