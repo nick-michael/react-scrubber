@@ -3,6 +3,7 @@
     height: 100%;
     position: relative;
     user-select: none;
+    touch-action: none;
 }
 .scrubber * {
     user-select: none;

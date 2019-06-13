@@ -1,8 +1,13 @@
 import React, { Component, createRef } from 'react';
+import fromEntries from 'object.fromentries';
+
 import './scrubber.css';
 
 const clamp = (min: number, max: number, val: number): number => Math.min(Math.max(min, val), max);
 const round = (val: number, dp: number) => parseFloat(val.toFixed(dp));
+
+// Use Object.fromEntries when available
+const filter = (object: Object, fn: (key: string, val: any) => boolean) => fromEntries(Object.entries(object).filter(([key, val]) => fn(key, val)));
 
 export type ScrubberProps = {
     className?: string,
@@ -73,6 +78,10 @@ export class Scrubber extends Component<ScrubberProps> {
     }
 
     handleTouchMove = (e: TouchEvent) => {
+        if (this.state.seeking) {
+            e.preventDefault();
+        }
+
         const touch = Array.from(e.changedTouches).find(t => t.identifier === this.state.touchId);
         if (touch) {
             this.setState({ touchX: touch.pageX }, () => {
@@ -129,6 +138,19 @@ export class Scrubber extends Component<ScrubberProps> {
         if (this.state.seeking) classes.push('seeking');
         if (className) classes.push(className);
 
+        const propsKeys = [
+            'className',
+            'value',
+            'min',
+            'max',
+            'bufferPosition',
+            'onScrubStart',
+            'onScrubEnd',
+            'onScrubChange',
+        ];
+
+        const customProps = filter(this.props, (key) => !propsKeys.includes(key));
+
         return (
             <div
                 onMouseDown={this.handleSeekStart}
@@ -136,7 +158,7 @@ export class Scrubber extends Component<ScrubberProps> {
                 onTouchEnd={e => e.preventDefault()}
                 onMouseOver={() => this.setState({ hover: true })}
                 onMouseLeave={() => this.setState({ hover: false })}
-                {...this.props}
+                {...customProps}
                 className={classes.join(' ')}
             >
                 <div className="bar" ref={this.barRef}>
