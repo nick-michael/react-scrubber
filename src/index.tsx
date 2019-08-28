@@ -89,7 +89,7 @@ export class Scrubber extends Component<ScrubberProps> {
 
     getPositionFromCursor = (): number => {
         const { vertical } = this.props;
-        return vertical ? this.getPositionFromMouseY() : this.getPositionFromCursor();
+        return vertical ? this.getPositionFromMouseY() : this.getPositionFromMouseX();
     }
 
     handleMouseMove = (e: MouseEvent) => {
