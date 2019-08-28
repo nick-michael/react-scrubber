@@ -9,37 +9,60 @@
     user-select: none;
 }
 .scrubber .bar {
+    background: rgba(100, 100, 100, 0.5);
+    position: relative;
+    transition: height 0.2s linear, width 0.2s linear;
+}
+.scrubber.horizontal .bar {
     top: 50%;
     left: 0;
     transform: translateY(-50%);
     height: 4px;
     width: 100%;
-    background: rgba(100, 100, 100, 0.5);
-    position: relative;
-    transition: height 0.2s linear;
+}
+.scrubber.vertical .bar {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 100%;
 }
 .scrubber .bar__progress {
     position: absolute;
-    height: 100%;
     background: #019AFD;
 }
 .scrubber .bar__buffer {
     position: absolute;
-    height: 100%;
     background: rgba(170, 170, 170, 0.6);
+}
+.scrubber.horizontal .bar__progress, .scrubber.horizontal .bar__buffer {
+    height: 100%;
+}
+.scrubber.vertical .bar__progress, .scrubber.vertical .bar__buffer {
+    width: 100%;
+    bottom: 0;
 }
 .scrubber .bar__thumb {
     position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
     width: 0px;
     height: 0px;
     border-radius: 10px;
     background: #019AFD;
     transition: height 0.2s linear, width 0.2s linear;
 }
-.scrubber.hover .bar {
+.scrubber.horizontal .bar__thumb {
+    transform: translate(-50%, -50%);
+    top: 50%;
+}
+.scrubber.vertical .bar__thumb {
+    transform: translate(-50%, 50%);
+    left: 50%;
+}
+.scrubber.hover.horizontal .bar {
     height: 6px;
+}
+.scrubber.hover.vertical .bar {
+    width: 6px;
 }
 .scrubber.hover .bar__thumb {
     width: 12px;

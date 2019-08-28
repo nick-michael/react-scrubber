@@ -98,6 +98,22 @@ class App extends Component {
                         </div>
                         <br />
                     </div>
+                    <div className="block" style={{ textAlign: 'center' }}>
+                        <div className="description" style={{ display: 'inline-block', width: '200px', verticalAlign: 'middle' }}>
+                            Vertical scrubbing is possible using the <code>"vertical"</code> prop.
+                        </div>
+                        <div style={{ display: 'inline-block', width: '150px', verticalAlign: 'middle' }}>
+                            <div className="scrubber-container" style={{ height: '80px', width: '20px', margin: 'auto' }}>
+                                <Scrubber
+                                    vertical
+                                    min={0}
+                                    max={100}
+                                    value={40}
+                                />
+                            </div>
+                        </div>
+                        <br />
+                    </div>
                 </div>
             </div>
         );

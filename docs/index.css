@@ -37,7 +37,7 @@ body {
     top: 50%;
 }
 
-.scrubber.labelled .bar {
+.scrubber.labelled .bar, .scrubber.labelled.hover .bar {
     height: 40px;
 }
 

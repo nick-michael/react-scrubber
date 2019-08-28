@@ -56,6 +56,7 @@ class App extends Component {
 | min | number | Yes | The minimum value of the slider
 | max | number | Yes | The maximum value of the slider
 | bufferPosition | number | No | Some number higher than the value, used to render a 'buffer' indicator
+| vertical | boolean | No | The scrubber will render vertically
 | onScrubStart | function | No | Called on mouse down or touch down
 | onScrubEnd | function | No | Called on mouse up or touch up while scrubbing
 | onScrubChange | function | No | Called on mouse move while scrubbing

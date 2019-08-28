@@ -15,6 +15,7 @@ export type ScrubberProps = {
     min: number;
     max: number;
     bufferPosition?: number;
+    vertical?: boolean;
     onScrubStart?: (value: number) => void;
     onScrubEnd?: (value: number) => void;
     onScrubChange?: (value: number) => void;
@@ -26,8 +27,10 @@ type Nullable<T> = T | null;
 type ScrubberState = {
     seeking: boolean;
     mouseX: Nullable<number>;
+    mouseY: Nullable<number>;
     touchId: Nullable<number>;
     touchX: Nullable<number>;
+    touchY: Nullable<number>;
     hover: boolean;
 };
 
@@ -36,8 +39,10 @@ export class Scrubber extends Component<ScrubberProps> {
     state: ScrubberState = {
         seeking: false,
         mouseX: null,
+        mouseY: null,
         touchId: null,
         touchX: null,
+        touchY: null,
         hover: false,
     }
 
@@ -63,16 +68,34 @@ export class Scrubber extends Component<ScrubberProps> {
         const { min, max } = this.props;
         const { mouseX, touchX } = this.state;
         const { left, width } = barDomNode.getBoundingClientRect();
-        const cursorX = typeof touchX === 'number' ? touchX : mouseX || 0;
-        const clampedX = clamp(left, left + width, cursorX);
-        const decimal = round((clampedX - left) / width, 7);
+        const cursor = typeof touchX === 'number' ? touchX : mouseX || 0;
+        const clamped = clamp(left, left + width, cursor);
+        const decimal = round((clamped - left) / width, 7);
+        return round((max - min) * decimal, 7);
+    }
+    getPositionFromMouseY = (): number => {
+        const barDomNode = this.barRef.current;
+        if (!barDomNode) {
+            return 0;
+        }
+        const { min, max } = this.props;
+        const { mouseY, touchY } = this.state;
+        const { bottom, height } = barDomNode.getBoundingClientRect();
+        const cursor = typeof touchY === 'number' ? touchY : mouseY || 0;
+        const clamped = clamp(bottom - height, bottom, cursor);
+        const decimal = round((bottom - clamped) / height, 7);
         return round((max - min) * decimal, 7);
     }
 
+    getPositionFromCursor = (): number => {
+        const { vertical } = this.props;
+        return vertical ? this.getPositionFromMouseY() : this.getPositionFromCursor();
+    }
+
     handleMouseMove = (e: MouseEvent) => {
-        this.setState({ mouseX: e.pageX }, () => {
+        this.setState({ mouseX: e.pageX, mouseY: e.pageY }, () => {
             if (this.state.seeking && this.props.onScrubChange) {
-                this.props.onScrubChange(this.getPositionFromMouseX());
+                this.props.onScrubChange(this.getPositionFromCursor());
             }
         });
     }
@@ -84,27 +107,27 @@ export class Scrubber extends Component<ScrubberProps> {
 
         const touch = Array.from(e.changedTouches).find(t => t.identifier === this.state.touchId);
         if (touch) {
-            this.setState({ touchX: touch.pageX }, () => {
+            this.setState({ touchX: touch.pageX, touchY: touch.pageY }, () => {
                 if (this.state.seeking && this.props.onScrubChange) {
-                    this.props.onScrubChange(this.getPositionFromMouseX());
+                    this.props.onScrubChange(this.getPositionFromCursor());
                 }
             });
         }
     }
 
     handleSeekStart = (e: React.MouseEvent<HTMLDivElement>) => {
-        this.setState({ seeking: true, mouseX: e.pageX }, () => {
+        this.setState({ seeking: true, mouseX: e.pageX, mouseY: e.pageY }, () => {
             if (this.props.onScrubStart) {
-                this.props.onScrubStart(this.getPositionFromMouseX());
+                this.props.onScrubStart(this.getPositionFromCursor());
             }
         });
     }
 
     handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
         const touch = e.changedTouches[0];
-        this.setState({ hover: true, seeking: true, touchId: touch.identifier, touchX: touch.pageX }, () => {
+        this.setState({ hover: true, seeking: true, touchId: touch.identifier, touchX: touch.pageX, touchY: touch.pageY }, () => {
             if (this.props.onScrubStart) {
-                this.props.onScrubStart(this.getPositionFromMouseX());
+                this.props.onScrubStart(this.getPositionFromCursor());
             }
         });
     }
@@ -112,9 +135,9 @@ export class Scrubber extends Component<ScrubberProps> {
     handleSeekEnd = () => {
         if (this.state.seeking) {
             if (this.props.onScrubEnd) {
-                this.props.onScrubEnd(this.getPositionFromMouseX());
+                this.props.onScrubEnd(this.getPositionFromCursor());
             }
-            this.setState({ seeking: false, mouseX: null  });
+            this.setState({ seeking: false, mouseX: null, mouseY: null  });
         }
     }
 
@@ -122,18 +145,18 @@ export class Scrubber extends Component<ScrubberProps> {
         const touch = Array.from(e.changedTouches).find(t => t.identifier === this.state.touchId);
         if (touch && this.state.seeking) {
             if (this.props.onScrubEnd) {
-                this.props.onScrubEnd(this.getPositionFromMouseX());
+                this.props.onScrubEnd(this.getPositionFromCursor());
             }
-            this.setState({ hover: false, seeking: false, touchX: null, touchId: null });
+            this.setState({ hover: false, seeking: false, touchX: null, touchY: null, touchId: null });
         }
     }
 
     render() {
-        const { className, value, min, max, bufferPosition = 0 } = this.props;
+        const { className, value, min, max, bufferPosition = 0, vertical } = this.props;
         const valuePercent = ((clamp(min, max, value) / (max - min)) * 100).toFixed(5);
         const bufferPercent = bufferPosition && ((clamp(min, max, bufferPosition) / (max - min)) * 100).toFixed(5);
 
-        const classes = ['scrubber'];
+        const classes = ['scrubber', vertical ? 'vertical' : 'horizontal'];
         if (this.state.hover) classes.push('hover');
         if (this.state.seeking) classes.push('seeking');
         if (className) classes.push(className);
@@ -144,6 +167,7 @@ export class Scrubber extends Component<ScrubberProps> {
             'min',
             'max',
             'bufferPosition',
+            'vertical',
             'onScrubStart',
             'onScrubEnd',
             'onScrubChange',
@@ -162,9 +186,9 @@ export class Scrubber extends Component<ScrubberProps> {
                 className={classes.join(' ')}
             >
                 <div className="bar" ref={this.barRef}>
-                    <div className="bar__buffer" style={{ width: `${bufferPercent}%` }} />
-                    <div className="bar__progress" style={{ width: `${valuePercent}%` }} />
-                    <div className="bar__thumb" style={{ left: `${valuePercent}%` }} />
+                    <div className="bar__buffer" style={{ [vertical ? 'height' : 'width']: `${bufferPercent}%` }} />
+                    <div className="bar__progress" style={{ [vertical ? 'height' : 'width']: `${valuePercent}%` }} />
+                    <div className="bar__thumb" style={{ [vertical ? 'bottom' : 'left']: `${valuePercent}%` }} />
                 </div>
             </div>
         );
