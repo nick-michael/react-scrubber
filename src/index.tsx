@@ -153,9 +153,9 @@ export class Scrubber extends Component<ScrubberProps> {
     }
 
     renderMarkers = () => {
-        const { vertical } = this.props;
-        if (this.props.markers) {
-            return this.props.markers.map((val, index) =>
+        const { vertical, markers } = this.props;
+        if (markers) {
+            return markers.map((val, index) =>
                 <div key={index} className="bar__marker" style={{[vertical ? 'bottom' : 'left']: `${val}%`}} />
             );
         }
