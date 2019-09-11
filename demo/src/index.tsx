@@ -71,7 +71,7 @@ class App extends Component {
                     </div>
                     <div className="block">
                         <div className="description">
-                            Although this is a generic scrubber, there is support for an optional buffer bar.
+                            Although this is a generic scrubber, there is support for an optional buffer bar and arbitrary markers.
                         </div>
                         <div className="scrubber-container" style={{ height: '20px' }}>
                             <Scrubber
@@ -79,6 +79,7 @@ class App extends Component {
                                 max={100}
                                 value={40}
                                 bufferPosition={75}
+                                markers={[69, 88]}
                             />
                         </div>
                     </div>

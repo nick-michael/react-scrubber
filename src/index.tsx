@@ -19,6 +19,7 @@ export type ScrubberProps = {
     onScrubStart?: (value: number) => void;
     onScrubEnd?: (value: number) => void;
     onScrubChange?: (value: number) => void;
+    markers?: number[];
     [key: string]: any;
 };
 
@@ -151,6 +152,16 @@ export class Scrubber extends Component<ScrubberProps> {
         }
     }
 
+    renderMarkers = () => {
+        const { vertical } = this.props;
+        if (this.props.markers) {
+            return this.props.markers.map((val, index) =>
+                <div key={index} className="bar__marker" style={{[vertical ? 'bottom' : 'left']: `${val}%`}} />
+            );
+        }
+        return null;
+    }
+
     render() {
         const { className, value, min, max, bufferPosition = 0, vertical } = this.props;
         const valuePercent = ((clamp(min, max, value) / (max - min)) * 100).toFixed(5);
@@ -187,6 +198,7 @@ export class Scrubber extends Component<ScrubberProps> {
             >
                 <div className="bar" ref={this.barRef}>
                     <div className="bar__buffer" style={{ [vertical ? 'height' : 'width']: `${bufferPercent}%` }} />
+                    {this.renderMarkers()}
                     <div className="bar__progress" style={{ [vertical ? 'height' : 'width']: `${valuePercent}%` }} />
                     <div className="bar__thumb" style={{ [vertical ? 'bottom' : 'left']: `${valuePercent}%` }} />
                 </div>
