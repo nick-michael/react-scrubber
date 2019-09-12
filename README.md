@@ -60,4 +60,5 @@ class App extends Component {
 | onScrubStart | function | No | Called on mouse down or touch down
 | onScrubEnd | function | No | Called on mouse up or touch up while scrubbing
 | onScrubChange | function | No | Called on mouse move while scrubbing
+| markers | number[] | No | Sets yellow indicators across the bar
 | custom props | any | No | Any other props will be applied to the outermost 'scrubber' div
