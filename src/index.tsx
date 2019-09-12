@@ -155,17 +155,24 @@ export class Scrubber extends Component<ScrubberProps> {
     renderMarkers = () => {
         const { vertical, markers } = this.props;
         if (markers) {
-            return markers.map((val, index) =>
-                <div key={index} className="bar__marker" style={{[vertical ? 'bottom' : 'left']: `${val}%`}} />
+            return markers.map((value, index) => {
+                const valuePercent = this.getValuePercent(value);
+                return <div key={index} className="bar__marker" style={{[vertical ? 'bottom' : 'left']: `${valuePercent}%`}} />
+            }
             );
         }
         return null;
     }
 
+    getValuePercent = (value: number) => {
+        const { min, max } = this.props;
+        return ((clamp(min, max, value) / (max - min)) * 100).toFixed(5);
+    }
+
     render() {
-        const { className, value, min, max, bufferPosition = 0, vertical } = this.props;
-        const valuePercent = ((clamp(min, max, value) / (max - min)) * 100).toFixed(5);
-        const bufferPercent = bufferPosition && ((clamp(min, max, bufferPosition) / (max - min)) * 100).toFixed(5);
+        const { className, value, bufferPosition = 0, vertical } = this.props;
+        const valuePercent = this.getValuePercent(value);
+        const bufferPercent = this.getValuePercent(bufferPosition);
 
         const classes = ['scrubber', vertical ? 'vertical' : 'horizontal'];
         if (this.state.hover) classes.push('hover');
