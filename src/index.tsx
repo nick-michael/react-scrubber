@@ -1,8 +1,6 @@
 import React, { Component, createRef } from 'react';
 import fromEntries from 'object.fromentries';
 
-import './scrubber.css';
-
 const clamp = (min: number, max: number, val: number): number => Math.min(Math.max(min, val), max);
 const round = (val: number, dp: number) => parseFloat(val.toFixed(dp));
 

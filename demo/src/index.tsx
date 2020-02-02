@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Scrubber } from 'react-scrubber';
 
+import 'react-scrubber/lib/scrubber.css';
 import './index.css';
 
 class App extends Component {
