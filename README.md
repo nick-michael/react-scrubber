@@ -4,14 +4,15 @@ A simple React scrubber component with touch controls, styling, and event handle
 The code for the above demo can be found inside the repository in the '/demo' folder.
 
 ## Dependencies
-React is listed as a peer dependency. React should be added as a dependency to your project.
-The component imports it's styling from a ".css" file so you'll need to have webpack set up to handle css imports. The typical combination of `style-loader` and `css-loader` works great!
+React is listed as a peer dependency. React should be added as a dependency to your project. The component provides its styling with a CSS stylesheet (`scrubber.css`) file, so you'll need to import it and have webpack set up to handle css imports. The typical combination of `style-loader` and `css-loader` works great!
 
 ## Usage
 ```js
 import  React, { Component } from  'react';
 import { Scrubber, ScrubberProps } from 'react-scrubber';
 // Note: ScrubberProps is a TypeScript interface and is not used for JS projects
+
+import 'react-scrubber/lib/scrubber.css'
 
 class App extends Component {
   state = {
