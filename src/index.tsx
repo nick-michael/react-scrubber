@@ -72,6 +72,7 @@ export class Scrubber extends Component<ScrubberProps> {
         const decimal = round((clamped - left) / width, 7);
         return round((max - min) * decimal, 7) + min;
     }
+
     getPositionFromMouseY = (): number => {
         const barDomNode = this.barRef.current;
         if (!barDomNode) {
