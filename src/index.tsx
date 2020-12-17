@@ -136,7 +136,7 @@ export class Scrubber extends Component<ScrubberProps> {
             if (this.props.onScrubEnd) {
                 this.props.onScrubEnd(this.getPositionFromCursor());
             }
-            this.setState({ seeking: false, mouseX: null, mouseY: null  });
+            this.setState({ seeking: false, mouseX: null, mouseY: null });
         }
     }
 
@@ -155,7 +155,7 @@ export class Scrubber extends Component<ScrubberProps> {
         if (markers) {
             return markers.map((value, index) => {
                 const valuePercent = this.getValuePercent(value);
-                return <div key={index} className="bar__marker" style={{[vertical ? 'bottom' : 'left']: `${valuePercent}%`}} />
+                return <div key={index} className="bar__marker" style={{ [vertical ? 'bottom' : 'left']: `${valuePercent}%` }} />
             }
             );
         }
@@ -164,7 +164,7 @@ export class Scrubber extends Component<ScrubberProps> {
 
     getValuePercent = (value: number) => {
         const { min, max } = this.props;
-        return ((clamp(min, max, value) / (max - min)) * 100).toFixed(5);
+        return (((clamp(min, max, value) - min) / (max - min)) * 100).toFixed(5);
     }
 
     render() {
