@@ -70,7 +70,7 @@ export class Scrubber extends Component<ScrubberProps> {
         const cursor = typeof touchX === 'number' ? touchX : mouseX || 0;
         const clamped = clamp(left, left + width, cursor);
         const decimal = round((clamped - left) / width, 7);
-        return round((max - min) * decimal, 7);
+        return round((max - min) * decimal, 7) + min;
     }
     getPositionFromMouseY = (): number => {
         const barDomNode = this.barRef.current;
@@ -83,7 +83,7 @@ export class Scrubber extends Component<ScrubberProps> {
         const cursor = typeof touchY === 'number' ? touchY : mouseY || 0;
         const clamped = clamp(bottom - height, bottom, cursor);
         const decimal = round((bottom - clamped) / height, 7);
-        return round((max - min) * decimal, 7);
+        return round((max - min) * decimal, 7) + min;
     }
 
     getPositionFromCursor = (): number => {
