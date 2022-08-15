@@ -7,6 +7,8 @@ const round = (val: number, dp: number) => parseFloat(val.toFixed(dp));
 // Use Object.fromEntries when available
 const filter = (object: Object, fn: (key: string, val: any) => boolean) => fromEntries(Object.entries(object).filter(([key, val]) => fn(key, val)));
 
+type Marker = { start: number, end?: number, className?: string };
+
 export type ScrubberProps = {
     className?: string,
     value: number;
@@ -17,7 +19,7 @@ export type ScrubberProps = {
     onScrubStart?: (value: number) => void;
     onScrubEnd?: (value: number) => void;
     onScrubChange?: (value: number) => void;
-    markers?: number[];
+    markers?: Array<number | Marker>;
     [key: string]: any;
 };
 
@@ -155,8 +157,42 @@ export class Scrubber extends Component<ScrubberProps> {
         const { vertical, markers } = this.props;
         if (markers) {
             return markers.map((value, index) => {
-                const valuePercent = this.getValuePercent(value);
-                return <div key={index} className="bar__marker" style={{ [vertical ? 'bottom' : 'left']: `${valuePercent}%` }} />
+                let className = "bar__marker";
+                const markerStyle: React.CSSProperties = {};
+
+                if (typeof value === 'number') {
+                    const valuePercent = this.getValuePercent(value);
+                    if (vertical) {
+                        markerStyle.bottom = `${valuePercent}%`;
+                    } else {
+                        markerStyle.left = `${valuePercent}%`;
+                    }
+                } else {
+                    const startPercent = this.getValuePercent(value.start);
+                    const endPercent = value.end && this.getValuePercent(value.end);
+
+                    if (vertical) {
+                        markerStyle.bottom = `${startPercent}%`;
+                        
+                        if (endPercent) {
+                            markerStyle.top = `${100 - parseFloat(endPercent)}%`;
+                            markerStyle.height = 'unset';
+                        }
+                    } else {
+                        markerStyle.left = `${startPercent}%`;
+                        
+                        if (endPercent) {
+                            markerStyle.right = `${100 - parseFloat(endPercent)}%`;
+                            markerStyle.width = 'unset';
+                        }
+                    }
+
+                    if (value.className) {
+                        className = `${className} ${value.className}`;
+                    }
+                }
+
+                return <div key={index} className={className} style={markerStyle} />
             }
             );
         }
