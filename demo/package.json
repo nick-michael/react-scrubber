@@ -5,11 +5,11 @@
         "docs": "webpack -o ../docs/bundle.js && node copy-to-docs.js"
     },
     "devDependencies": {
-        "@types/react": "^16.9.2",
-        "@types/react-dom": "^16.9.0",
+        "@types/react": "17.0.39",
+        "@types/react-dom": "17.0.11",
         "css-loader": "^3.2.0",
-        "react": "^16.9.0",
-        "react-dom": "^16.9.0",
+        "react": "17.0.2",
+        "react-dom": "17.0.2",
         "source-map-loader": "^0.2.4",
         "style-loader": "^1.0.0",
         "ts-loader": "^6.0.4",
