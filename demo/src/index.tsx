@@ -73,6 +73,11 @@ class App extends Component {
                     <div className="block">
                         <div className="description">
                             Although this is a generic scrubber, there is support for an optional buffer bar and arbitrary markers.
+                            <br />
+                            <br />
+                            Markers can be either a number or an object
+                            containing <code>{`{ start: number, end: number, className: string }`}</code> where <code>end</code> and <code>className</code> are
+                            optional. For numerical markers, or markers with no end point specified, a default width will be applied.
                         </div>
                         <div className="scrubber-container" style={{ height: '20px' }}>
                             <Scrubber
@@ -80,9 +85,32 @@ class App extends Component {
                                 max={100}
                                 value={40}
                                 bufferPosition={75}
-                                markers={[69, 88]}
+                                markers={[
+                                    { start: 10, end: 20, className: 'type-1' },
+                                    { start: 24, end: 34, className: 'type-2' },
+                                    { start: 70, end: 84, className: 'type-1' },
+                                    { start: 42 },
+                                    74,
+                                    88,
+                                ]}
                             />
                         </div>
+                        <code className="codeblock" style={{ marginTop: '10px' }} >{
+`<Scrubber
+    min={0}
+    max={100}
+    value={40}
+    bufferPosition={75}
+    markers={[
+        { start: 10, end: 20, className: 'type-1' },
+        { start: 24, end: 34, className: 'type-2' },
+        { start: 70, end: 84, className: 'type-1' },
+        { start: 42 },
+        74,
+        88,
+    ]}
+/>`
+                        }</code>
                     </div>
                     <div className="block">
                         <div className="description">

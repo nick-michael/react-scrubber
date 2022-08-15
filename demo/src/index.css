@@ -4,6 +4,19 @@ body {
     color: #AAA;
 }
 
+code {
+    background: #3F3F3F;
+    padding: 2px 4px;
+    border-radius: 4px;
+    line-height: 1.8em;
+}
+
+code.codeblock {
+    white-space: pre-wrap;
+    display: block;
+    line-height: initial;
+}
+
 .title {
     text-align: center;
 }
@@ -108,4 +121,12 @@ body {
     grid-template-columns: 50% 50%;
     text-align: center;
     margin: 10px 0;
+}
+
+.scrubber .bar__marker.type-1 {
+    background: #ED269D;
+}
+
+.scrubber .bar__marker.type-2 {
+    background: #004A09;
 }
