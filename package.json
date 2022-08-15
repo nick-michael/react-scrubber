@@ -1,6 +1,6 @@
 {
     "name": "react-scrubber",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "React scrubber component with touch controls, styling, and lots event handlers",
     "main": "./lib/index.js",
     "scripts": {
