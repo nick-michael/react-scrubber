@@ -252,9 +252,39 @@ var Scrubber = /** @class */ (function (_super) {
             var _a = _this.props, vertical = _a.vertical, markers = _a.markers;
             if (markers) {
                 return markers.map(function (value, index) {
-                    var _a;
-                    var valuePercent = _this.getValuePercent(value);
-                    return react_1.default.createElement("div", { key: index, className: "bar__marker", style: (_a = {}, _a[vertical ? 'bottom' : 'left'] = valuePercent + "%", _a) });
+                    var className = "bar__marker";
+                    var markerStyle = {};
+                    if (typeof value === 'number') {
+                        var valuePercent = _this.getValuePercent(value);
+                        if (vertical) {
+                            markerStyle.bottom = valuePercent + "%";
+                        }
+                        else {
+                            markerStyle.left = valuePercent + "%";
+                        }
+                    }
+                    else {
+                        var startPercent = _this.getValuePercent(value.start);
+                        var endPercent = value.end && _this.getValuePercent(value.end);
+                        if (vertical) {
+                            markerStyle.bottom = startPercent + "%";
+                            if (endPercent) {
+                                markerStyle.top = 100 - parseFloat(endPercent) + "%";
+                                markerStyle.height = 'unset';
+                            }
+                        }
+                        else {
+                            markerStyle.left = startPercent + "%";
+                            if (endPercent) {
+                                markerStyle.right = 100 - parseFloat(endPercent) + "%";
+                                markerStyle.width = 'unset';
+                            }
+                        }
+                        if (value.className) {
+                            className = className + " " + value.className;
+                        }
+                    }
+                    return react_1.default.createElement("div", { key: index, className: className, style: markerStyle });
                 });
             }
             return null;
@@ -6547,7 +6577,7 @@ if (false) {} else {
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../demo/node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
 exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
-exports.push([module.i, ".scrubber {\n  width: 100%;\n  height: 100%;\n  position: relative;\n  user-select: none;\n  touch-action: none;\n}\n.scrubber * {\n  user-select: none;\n}\n.scrubber .bar {\n  background: rgba(100, 100, 100, 0.5);\n  position: relative;\n  transition: height 0.2s linear, width 0.2s linear;\n}\n.scrubber.horizontal .bar {\n  top: 50%;\n  left: 0;\n  transform: translateY(-50%);\n  height: 4px;\n  width: 100%;\n}\n.scrubber.vertical .bar {\n  top: 0;\n  left: 50%;\n  transform: translateX(-50%);\n  width: 4px;\n  height: 100%;\n}\n.scrubber .bar__progress {\n  position: absolute;\n  background: #019afd;\n}\n.scrubber .bar__buffer {\n  position: absolute;\n  background: rgba(170, 170, 170, 0.6);\n}\n.scrubber.horizontal .bar__progress,\n.scrubber.horizontal .bar__marker,\n.scrubber.horizontal .bar__buffer {\n  height: 100%;\n}\n.scrubber.vertical .bar__progress,\n.scrubber.vertical .bar__marker,\n.scrubber.vertical .bar__buffer {\n  width: 100%;\n  bottom: 0;\n}\n.scrubber .bar__thumb {\n  position: absolute;\n  width: 0px;\n  height: 0px;\n  border-radius: 10px;\n  background: #019afd;\n  transition: height 0.2s linear, width 0.2s linear;\n}\n.scrubber.horizontal .bar__thumb {\n  transform: translate(-50%, -50%);\n  top: 50%;\n}\n.scrubber.vertical .bar__thumb {\n  transform: translate(-50%, 50%);\n  left: 50%;\n}\n.scrubber.hover.horizontal .bar {\n  height: 6px;\n}\n.scrubber.hover.vertical .bar {\n  width: 6px;\n}\n.scrubber.hover .bar__thumb {\n  width: 12px;\n  height: 12px;\n}\n\n.scrubber .bar__marker {\n  position: absolute;\n  background: rgb(240, 205, 5);\n}\n\n.scrubber.horizontal .bar__marker {\n  width: 12px;\n}\n\n.scrubber.vertical .bar__marker {\n  height: 12px;\n}\n", ""]);
+exports.push([module.i, ".scrubber {\n  width: 100%;\n  height: 100%;\n  position: relative;\n  user-select: none;\n  touch-action: none;\n}\n.scrubber * {\n  user-select: none;\n}\n.scrubber .bar {\n  background: rgba(100, 100, 100, 0.5);\n  position: relative;\n  transition: height 0.2s linear, width 0.2s linear;\n}\n.scrubber.horizontal .bar {\n  top: 50%;\n  left: 0;\n  transform: translateY(-50%);\n  height: 4px;\n  width: 100%;\n}\n.scrubber.vertical .bar {\n  top: 0;\n  left: 50%;\n  transform: translateX(-50%);\n  width: 4px;\n  height: 100%;\n}\n.scrubber .bar__progress {\n  position: absolute;\n  background: #019afd;\n}\n.scrubber .bar__buffer {\n  position: absolute;\n  background: rgba(170, 170, 170, 0.6);\n}\n.scrubber.horizontal .bar__progress,\n.scrubber.horizontal .bar__marker,\n.scrubber.horizontal .bar__buffer {\n  height: 100%;\n}\n.scrubber.vertical .bar__progress,\n.scrubber.vertical .bar__marker,\n.scrubber.vertical .bar__buffer {\n  width: 100%;\n  bottom: 0;\n}\n.scrubber .bar__thumb {\n  position: absolute;\n  width: 0px;\n  height: 0px;\n  border-radius: 10px;\n  background: #019afd;\n  transition: height 0.2s linear, width 0.2s linear;\n}\n.scrubber.horizontal .bar__thumb {\n  transform: translate(-50%, -50%);\n  top: 50%;\n}\n.scrubber.vertical .bar__thumb {\n  transform: translate(-50%, 50%);\n  left: 50%;\n}\n.scrubber.hover.horizontal .bar {\n  height: 6px;\n}\n.scrubber.hover.vertical .bar {\n  width: 6px;\n}\n.scrubber.hover .bar__thumb {\n  width: 12px;\n  height: 12px;\n}\n\n.scrubber .bar__marker {\n  position: absolute;\n  background: rgb(240, 205, 5);\n  z-index: 1;\n}\n\n.scrubber.horizontal .bar__marker {\n  width: 12px;\n}\n\n.scrubber.vertical .bar__marker {\n  height: 12px;\n}\n", ""]);
 // Exports
 module.exports = exports;
 
@@ -6565,7 +6595,7 @@ module.exports = exports;
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
 exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
-exports.push([module.i, "body {\n    font-family: sans-serif;\n    background: #242424;\n    color: #AAA;\n}\n\n.title {\n    text-align: center;\n}\n\n.github-link {\n    text-align: center;\n    text-decoration: none;\n    color: #019AFD;\n    font-weight: bolder;\n    display: block;\n    margin-top: 20px;\n}\n\n.content-container {\n    max-width: 700px;\n    width: 80%;\n    margin: auto;\n}\n\n.description {\n    margin-bottom: 10px;\n}\n\n.block {\n    padding: 15px;\n    border: 3px solid #666;\n    margin: 20px 0;\n}\n\n.scrubber .bar {\n    top: 50%;\n}\n\n.scrubber.labelled .bar, .scrubber.labelled.hover .bar {\n    height: 40px;\n}\n\n.scrubber.labelled .bar::before {\n    position: absolute;\n    bottom: -40px;\n    font-size: 16px;\n    right: 10%;\n    height: 50px;\n    padding-right: 6px;\n    content: '.bar';\n    border-right: 2px solid #666;\n    line-height: 0.8;\n    display: flex;\n    align-items: flex-end;\n}\n\n.scrubber.labelled .bar__thumb {\n    width: 60px;\n    height: 60px;\n    border-radius: 30px;\n}\n\n.scrubber.labelled .bar::after {\n    position: absolute;\n    bottom: -40px;\n    font-size: 16px;\n    right: 60%;\n    height: 50px;\n    padding-right: 6px;\n    content: '.bar__thumb';\n    border-right: 2px solid #666;\n    line-height: 0.8;\n    display: flex;\n    align-items: flex-end;\n}\n\n.scrubber.labelled .bar__buffer::before {\n    position: absolute;\n    bottom: -40px;\n    font-size: 16px;\n    right: 10%;\n    height: 50px;\n    padding-right: 6px;\n    content: '.bar__buffer';\n    border-right: 2px solid #666;\n    line-height: 0.8;\n    display: flex;\n    align-items: flex-end;\n}\n\n.scrubber.labelled .bar__progress::before {\n    position: absolute;\n    bottom: -40px;\n    font-size: 16px;\n    right: 50%;\n    height: 50px;\n    padding-right: 6px;\n    content: '.bar__progress';\n    border-right: 2px solid #666;\n    line-height: 0.8;\n    display: flex;\n    align-items: flex-end;\n}\n\n.data {\n    display: grid;\n    grid-template-columns: 50% 50%;\n    text-align: center;\n    margin: 10px 0;\n}\n", ""]);
+exports.push([module.i, "body {\n    font-family: sans-serif;\n    background: #242424;\n    color: #AAA;\n}\n\ncode {\n    background: #3F3F3F;\n    padding: 2px 4px;\n    border-radius: 4px;\n    line-height: 1.8em;\n}\n\ncode.codeblock {\n    white-space: pre-wrap;\n    display: block;\n    line-height: initial;\n}\n\n.title {\n    text-align: center;\n}\n\n.github-link {\n    text-align: center;\n    text-decoration: none;\n    color: #019AFD;\n    font-weight: bolder;\n    display: block;\n    margin-top: 20px;\n}\n\n.content-container {\n    max-width: 700px;\n    width: 80%;\n    margin: auto;\n}\n\n.description {\n    margin-bottom: 10px;\n}\n\n.block {\n    padding: 15px;\n    border: 3px solid #666;\n    margin: 20px 0;\n}\n\n.scrubber .bar {\n    top: 50%;\n}\n\n.scrubber.labelled .bar, .scrubber.labelled.hover .bar {\n    height: 40px;\n}\n\n.scrubber.labelled .bar::before {\n    position: absolute;\n    bottom: -40px;\n    font-size: 16px;\n    right: 10%;\n    height: 50px;\n    padding-right: 6px;\n    content: '.bar';\n    border-right: 2px solid #666;\n    line-height: 0.8;\n    display: flex;\n    align-items: flex-end;\n}\n\n.scrubber.labelled .bar__thumb {\n    width: 60px;\n    height: 60px;\n    border-radius: 30px;\n}\n\n.scrubber.labelled .bar::after {\n    position: absolute;\n    bottom: -40px;\n    font-size: 16px;\n    right: 60%;\n    height: 50px;\n    padding-right: 6px;\n    content: '.bar__thumb';\n    border-right: 2px solid #666;\n    line-height: 0.8;\n    display: flex;\n    align-items: flex-end;\n}\n\n.scrubber.labelled .bar__buffer::before {\n    position: absolute;\n    bottom: -40px;\n    font-size: 16px;\n    right: 10%;\n    height: 50px;\n    padding-right: 6px;\n    content: '.bar__buffer';\n    border-right: 2px solid #666;\n    line-height: 0.8;\n    display: flex;\n    align-items: flex-end;\n}\n\n.scrubber.labelled .bar__progress::before {\n    position: absolute;\n    bottom: -40px;\n    font-size: 16px;\n    right: 50%;\n    height: 50px;\n    padding-right: 6px;\n    content: '.bar__progress';\n    border-right: 2px solid #666;\n    line-height: 0.8;\n    display: flex;\n    align-items: flex-end;\n}\n\n.data {\n    display: grid;\n    grid-template-columns: 50% 50%;\n    text-align: center;\n    margin: 10px 0;\n}\n\n.scrubber .bar__marker.type-1 {\n    background: #ED269D;\n}\n\n.scrubber .bar__marker.type-2 {\n    background: #004A09;\n}\n", ""]);
 // Exports
 module.exports = exports;
 
@@ -36895,9 +36925,40 @@ class App extends react_1.Component {
                     react_1.default.createElement("div", { className: "scrubber-container", style: { height: '60px' } },
                         react_1.default.createElement(react_scrubber_1.Scrubber, { min: 0, max: 100, value: 40 }))),
                 react_1.default.createElement("div", { className: "block" },
-                    react_1.default.createElement("div", { className: "description" }, "Although this is a generic scrubber, there is support for an optional buffer bar and arbitrary markers."),
+                    react_1.default.createElement("div", { className: "description" },
+                        "Although this is a generic scrubber, there is support for an optional buffer bar and arbitrary markers.",
+                        react_1.default.createElement("br", null),
+                        react_1.default.createElement("br", null),
+                        "Markers can be either a number or an object containing ",
+                        react_1.default.createElement("code", null, `{ start: number, end: number, className: string }`),
+                        " where ",
+                        react_1.default.createElement("code", null, "end"),
+                        " and ",
+                        react_1.default.createElement("code", null, "className"),
+                        " are optional. For numerical markers, or markers with no end point specified, a default width will be applied."),
                     react_1.default.createElement("div", { className: "scrubber-container", style: { height: '20px' } },
-                        react_1.default.createElement(react_scrubber_1.Scrubber, { min: 0, max: 100, value: 40, bufferPosition: 75, markers: [69, 88] }))),
+                        react_1.default.createElement(react_scrubber_1.Scrubber, { min: 0, max: 100, value: 40, bufferPosition: 75, markers: [
+                                { start: 10, end: 20, className: 'type-1' },
+                                { start: 24, end: 34, className: 'type-2' },
+                                { start: 70, end: 84, className: 'type-1' },
+                                { start: 42 },
+                                74,
+                                88,
+                            ] })),
+                    react_1.default.createElement("code", { className: "codeblock", style: { marginTop: '10px' } }, `<Scrubber
+    min={0}
+    max={100}
+    value={40}
+    bufferPosition={75}
+    markers={[
+        { start: 10, end: 20, className: 'type-1' },
+        { start: 24, end: 34, className: 'type-2' },
+        { start: 70, end: 84, className: 'type-1' },
+        { start: 42 },
+        74,
+        88,
+    ]}
+/>`)),
                 react_1.default.createElement("div", { className: "block" },
                     react_1.default.createElement("div", { className: "description" },
                         "All the elements have class names so the style can be overriden. You can also pass down a class name into the className prop.",
