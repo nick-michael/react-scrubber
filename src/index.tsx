@@ -188,6 +188,7 @@ export class Scrubber extends Component<ScrubberProps> {
             'onScrubStart',
             'onScrubEnd',
             'onScrubChange',
+            'markers',
         ];
 
         const customProps = filter(this.props, (key) => !propsKeys.includes(key));
