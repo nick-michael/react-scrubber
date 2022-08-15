@@ -1,5 +1,6 @@
-import React, { Component, createRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import fromEntries from 'object.fromentries';
+import { useRefState } from './use-ref-state';
 
 const clamp = (min: number, max: number, val: number): number => Math.min(Math.max(min, val), max);
 const round = (val: number, dp: number) => parseFloat(val.toFixed(dp));
@@ -23,49 +24,29 @@ export type ScrubberProps = {
 
 type Nullable<T> = T | null;
 
-type ScrubberState = {
-    seeking: boolean;
-    mouseX: Nullable<number>;
-    mouseY: Nullable<number>;
-    touchId: Nullable<number>;
-    touchX: Nullable<number>;
-    touchY: Nullable<number>;
-    hover: boolean;
+type Position = {
+    x : Nullable<number>;
+    y : Nullable<number>;
 };
 
-export class Scrubber extends Component<ScrubberProps> {
-    barRef = createRef<HTMLDivElement>();
-    state: ScrubberState = {
-        seeking: false,
-        mouseX: null,
-        mouseY: null,
-        touchId: null,
-        touchX: null,
-        touchY: null,
-        hover: false,
-    }
+export function Scrubber(props: ScrubberProps) {
+    const barRef = useRef<HTMLDivElement>(null);
+    const [mousePosition, setMousePosition] = useState<Position>({ x: null, y: null });
+    const [touchPosition, setTouchPosition] = useState<Position>({ x: null, y: null });
+    const [isHovered, setIsHovered] = useState(false);
 
-    componentDidMount() {
-        window.addEventListener('mousemove', this.handleMouseMove);
-        window.addEventListener('mouseup', this.handleSeekEnd);
-        window.addEventListener('touchmove', this.handleTouchMove);
-        window.addEventListener('touchend', this.handleTouchEnd);
-    }
+    const [touchId, setTouchId, touchIdRef] = useRefState<Nullable<number>>(null);
+    const [isSeeking, setIsSeeking, isSeekingRef] = useRefState(false);
 
-    componentWillUnmount() {
-        window.removeEventListener('mousemove', this.handleMouseMove);
-        window.removeEventListener('mouseup', this.handleSeekEnd);
-        window.removeEventListener('touchmove', this.handleTouchMove);
-        window.removeEventListener('touchend', this.handleTouchEnd);
-    }
-
-    getPositionFromMouseX = (): number => {
-        const barDomNode = this.barRef.current;
+    
+    function getPositionFromMouseX(): number {
+        const barDomNode = barRef.current;
         if (!barDomNode) {
             return 0;
         }
-        const { min, max } = this.props;
-        const { mouseX, touchX } = this.state;
+        const { min, max } = props;
+        const { x: mouseX } = mousePosition;
+        const { x: touchX } = touchPosition;
         const { left, width } = barDomNode.getBoundingClientRect();
         const cursor = typeof touchX === 'number' ? touchX : mouseX || 0;
         const clamped = clamp(left, left + width, cursor);
@@ -73,13 +54,14 @@ export class Scrubber extends Component<ScrubberProps> {
         return round((max - min) * decimal, 7) + min;
     }
 
-    getPositionFromMouseY = (): number => {
-        const barDomNode = this.barRef.current;
+    function getPositionFromMouseY(): number {
+        const barDomNode = barRef.current;
         if (!barDomNode) {
             return 0;
         }
-        const { min, max } = this.props;
-        const { mouseY, touchY } = this.state;
+        const { min, max } = props;
+        const { y: mouseY } = mousePosition;
+        const { y: touchY } = touchPosition;
         const { bottom, height } = barDomNode.getBoundingClientRect();
         const cursor = typeof touchY === 'number' ? touchY : mouseY || 0;
         const clamped = clamp(bottom - height, bottom, cursor);
@@ -87,75 +69,64 @@ export class Scrubber extends Component<ScrubberProps> {
         return round((max - min) * decimal, 7) + min;
     }
 
-    getPositionFromCursor = (): number => {
-        const { vertical } = this.props;
-        return vertical ? this.getPositionFromMouseY() : this.getPositionFromMouseX();
+    function getPositionFromCursor(): number {
+        const { vertical } = props;
+        return vertical ? getPositionFromMouseY() : getPositionFromMouseX();
     }
 
-    handleMouseMove = (e: MouseEvent) => {
-        this.setState({ mouseX: e.pageX, mouseY: e.pageY }, () => {
-            if (this.state.seeking && this.props.onScrubChange) {
-                this.props.onScrubChange(this.getPositionFromCursor());
-            }
-        });
-    }
-
-    handleTouchMove = (e: TouchEvent) => {
-        if (this.state.seeking) {
-            e.preventDefault();
+    function handleMouseMove(e: MouseEvent) {
+        if (!isSeekingRef.current) {
+            return;
         }
 
-        const touch = Array.from(e.changedTouches).find(t => t.identifier === this.state.touchId);
+        setMousePosition({ x: e.pageX, y: e.pageY });
+    }
+
+    function handleTouchMove(e: TouchEvent) {
+        if (!isSeekingRef.current) {
+            return;
+        }
+
+        e.preventDefault();
+        const touch = Array.from(e.changedTouches).find(t => t.identifier === touchIdRef.current);
         if (touch) {
-            this.setState({ touchX: touch.pageX, touchY: touch.pageY }, () => {
-                if (this.state.seeking && this.props.onScrubChange) {
-                    this.props.onScrubChange(this.getPositionFromCursor());
-                }
-            });
+            setTouchPosition({ x: touch.pageX, y: touch.pageY });
         }
     }
 
-    handleSeekStart = (e: React.MouseEvent<HTMLDivElement>) => {
-        this.setState({ seeking: true, mouseX: e.pageX, mouseY: e.pageY }, () => {
-            if (this.props.onScrubStart) {
-                this.props.onScrubStart(this.getPositionFromCursor());
-            }
-        });
+    function handleSeekStart(e: React.MouseEvent<HTMLDivElement>) {
+        setIsSeeking(true);
+        setMousePosition({ x: e.pageX, y: e.pageY });
     }
 
-    handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    function handleTouchStart(e: React.TouchEvent<HTMLDivElement>) {
         const touch = e.changedTouches[0];
-        this.setState({ hover: true, seeking: true, touchId: touch.identifier, touchX: touch.pageX, touchY: touch.pageY }, () => {
-            if (this.props.onScrubStart) {
-                this.props.onScrubStart(this.getPositionFromCursor());
-            }
-        });
+        setIsHovered(true);
+        setIsSeeking(true);
+        setTouchId(touch.identifier);
+        setTouchPosition({ x: touch.pageX, y: touch.pageY });
     }
 
-    handleSeekEnd = () => {
-        if (this.state.seeking) {
-            if (this.props.onScrubEnd) {
-                this.props.onScrubEnd(this.getPositionFromCursor());
-            }
-            this.setState({ seeking: false, mouseX: null, mouseY: null });
+    function handleSeekEnd() {
+        setIsSeeking(false);
+        setMousePosition({ x: null, y: null });
+    }
+
+    function handleTouchEnd(e: TouchEvent) {
+        const touch = Array.from(e.changedTouches).find(t => t.identifier === touchIdRef.current);
+        if (touch) {
+            setIsSeeking(false);
+            setIsHovered(false);
+            setTouchPosition({ x: null, y: null });
+            setTouchId(null);
         }
     }
 
-    handleTouchEnd = (e: TouchEvent) => {
-        const touch = Array.from(e.changedTouches).find(t => t.identifier === this.state.touchId);
-        if (touch && this.state.seeking) {
-            if (this.props.onScrubEnd) {
-                this.props.onScrubEnd(this.getPositionFromCursor());
-            }
-            this.setState({ hover: false, seeking: false, touchX: null, touchY: null, touchId: null });
-        }
-    }
-
-    renderMarkers = () => {
-        const { vertical, markers } = this.props;
+    function renderMarkers() {
+        const { vertical, markers } = props;
         if (markers) {
             return markers.map((value, index) => {
-                const valuePercent = this.getValuePercent(value);
+                const valuePercent = getValuePercent(value);
                 return <div key={index} className="bar__marker" style={{ [vertical ? 'bottom' : 'left']: `${valuePercent}%` }} />
             }
             );
@@ -163,52 +134,85 @@ export class Scrubber extends Component<ScrubberProps> {
         return null;
     }
 
-    getValuePercent = (value: number) => {
-        const { min, max } = this.props;
+    function getValuePercent(value: number) {
+        const { min, max } = props;
         return (((clamp(min, max, value) - min) / (max - min)) * 100).toFixed(5);
     }
 
-    render() {
-        const { className, value, bufferPosition = 0, vertical } = this.props;
-        const valuePercent = this.getValuePercent(value);
-        const bufferPercent = this.getValuePercent(bufferPosition);
+    useEffect(() => {
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseup', handleSeekEnd);
+        window.addEventListener('touchmove', handleTouchMove);
+        window.addEventListener('touchend', handleTouchEnd);
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleSeekEnd);
+            window.removeEventListener('touchmove', handleTouchMove);
+            window.removeEventListener('touchend', handleTouchEnd);
+        }
+    }, []);
 
-        const classes = ['scrubber', vertical ? 'vertical' : 'horizontal'];
-        if (this.state.hover) classes.push('hover');
-        if (this.state.seeking) classes.push('seeking');
-        if (className) classes.push(className);
+    useEffect(() => {
+        if (isSeeking && props.onScrubChange) {
+            props.onScrubChange(getPositionFromCursor());
+        }
+    }, [mousePosition, touchPosition]);
 
-        const propsKeys = [
-            'className',
-            'value',
-            'min',
-            'max',
-            'bufferPosition',
-            'vertical',
-            'onScrubStart',
-            'onScrubEnd',
-            'onScrubChange',
-        ];
+    useEffect(() => {
+        if (isSeeking && props.onScrubStart) {
+            props.onScrubStart(getPositionFromCursor());
+        } else if (!isSeeking && props.onScrubEnd) {
+            props.onScrubEnd(getPositionFromCursor());
+        }
+    }, [isSeeking]);
 
-        const customProps = filter(this.props, (key) => !propsKeys.includes(key));
+    const valuePercent = useMemo(() => {
+        return getValuePercent(props.value);
+    }, [props.value]);
 
-        return (
-            <div
-                onMouseDown={this.handleSeekStart}
-                onTouchStart={this.handleTouchStart}
-                onTouchEnd={e => e.preventDefault()}
-                onMouseOver={() => this.setState({ hover: true })}
-                onMouseLeave={() => this.setState({ hover: false })}
-                {...customProps}
-                className={classes.join(' ')}
-            >
-                <div className="bar" ref={this.barRef}>
-                    <div className="bar__buffer" style={{ [vertical ? 'height' : 'width']: `${bufferPercent}%` }} />
-                    {this.renderMarkers()}
-                    <div className="bar__progress" style={{ [vertical ? 'height' : 'width']: `${valuePercent}%` }} />
-                    <div className="bar__thumb" style={{ [vertical ? 'bottom' : 'left']: `${valuePercent}%` }} />
-                </div>
+    const bufferPercent = useMemo(() => {
+        return getValuePercent(props.bufferPosition || 0);
+    }, [props.bufferPosition]);
+
+    const classNames = useMemo(() => {
+        const classes = ['scrubber', props.vertical ? 'vertical' : 'horizontal'];
+        if (isHovered) classes.push('hover');
+        if (isSeeking) classes.push('seeking');
+        if (props.className) classes.push(props.className);
+        return classes.join(' ');
+    }, [isHovered, isSeeking, props.vertical, props.className]);
+
+    const propsKeys = [
+        'className',
+        'value',
+        'min',
+        'max',
+        'bufferPosition',
+        'vertical',
+        'onScrubStart',
+        'onScrubEnd',
+        'onScrubChange',
+        'markers',
+    ];
+
+    const customProps = filter(props, (key) => !propsKeys.includes(key));
+
+    return (
+        <div
+            onMouseDown={handleSeekStart}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={e => e.preventDefault()}
+            onMouseOver={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            {...customProps}
+            className={classNames}
+        >
+            <div className="bar" ref={barRef}>
+                <div className="bar__buffer" style={{ [props.vertical ? 'height' : 'width']: `${bufferPercent}%` }} />
+                {renderMarkers()}
+                <div className="bar__progress" style={{ [props.vertical ? 'height' : 'width']: `${valuePercent}%` }} />
+                <div className="bar__thumb" style={{ [props.vertical ? 'bottom' : 'left']: `${valuePercent}%` }} />
             </div>
-        );
-    }
-};
+        </div>
+    );
+}
