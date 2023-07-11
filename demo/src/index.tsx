@@ -57,6 +57,21 @@ class App extends Component {
                         </div>
                     </div>
                     <div className="block">
+                        <div className="description">You can render a tooltip by passing options in the <code>"tooltip"</code> prop</div>
+                        <br />
+                        <div className="scrubber-container" style={{ height: '20px' }}>
+                            <Scrubber
+                                min={0}
+                                max={100}
+                                value={40}
+                                tooltip={{
+                                    enabledOnHover: true,
+                                    enabledOnScrub: true,
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="block">
                         <div className="description">
                             The scrubber will fill the width of it's container by default.
                             The scrubber will also fill the height of it's container, but this will only
@@ -139,6 +154,10 @@ class App extends Component {
                                     min={0}
                                     max={100}
                                     value={40}
+                                    tooltip={{
+                                        enabledOnHover: true,
+                                        enabledOnScrub: true,
+                                    }}
                                 />
                             </div>
                         </div>

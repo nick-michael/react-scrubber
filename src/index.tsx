@@ -9,6 +9,13 @@ const filter = (object: Object, fn: (key: string, val: any) => boolean) => fromE
 
 type Marker = { start: number, end?: number, className?: string };
 
+type Tooltip = {
+    enabledOnHover?: boolean;
+    enabledOnScrub?: boolean;
+    className?: string;
+    formatString?: (value: number) => string;
+};
+
 export type ScrubberProps = {
     className?: string,
     value: number;
@@ -19,6 +26,8 @@ export type ScrubberProps = {
     onScrubStart?: (value: number) => void;
     onScrubEnd?: (value: number) => void;
     onScrubChange?: (value: number) => void;
+    onHover?: (value: number) => void;
+    tooltip?: Tooltip;
     markers?: Array<number | Marker>;
     [key: string]: any;
 };
@@ -68,7 +77,8 @@ export class Scrubber extends Component<ScrubberProps> {
         }
         const { min, max } = this.props;
         const { mouseX, touchX } = this.state;
-        const { left, width } = barDomNode.getBoundingClientRect();
+        const { left: elementLeft, width } = barDomNode.getBoundingClientRect();
+        const left = elementLeft + window.scrollX;
         const cursor = typeof touchX === 'number' ? touchX : mouseX || 0;
         const clamped = clamp(left, left + width, cursor);
         const decimal = round((clamped - left) / width, 7);
@@ -82,8 +92,9 @@ export class Scrubber extends Component<ScrubberProps> {
         }
         const { min, max } = this.props;
         const { mouseY, touchY } = this.state;
-        const { bottom, height } = barDomNode.getBoundingClientRect();
+        const { bottom: elementBottom, height } = barDomNode.getBoundingClientRect();
         const cursor = typeof touchY === 'number' ? touchY : mouseY || 0;
+        const bottom = elementBottom + window.scrollY;
         const clamped = clamp(bottom - height, bottom, cursor);
         const decimal = round((bottom - clamped) / height, 7);
         return round((max - min) * decimal, 7) + min;
@@ -98,6 +109,8 @@ export class Scrubber extends Component<ScrubberProps> {
         this.setState({ mouseX: e.pageX, mouseY: e.pageY }, () => {
             if (this.state.seeking && this.props.onScrubChange) {
                 this.props.onScrubChange(this.getPositionFromCursor());
+            } else if (this.state.hover && this.props.onHover) {
+                this.props.onHover(this.getPositionFromCursor());
             }
         });
     }
@@ -139,7 +152,7 @@ export class Scrubber extends Component<ScrubberProps> {
             if (this.props.onScrubEnd) {
                 this.props.onScrubEnd(this.getPositionFromCursor());
             }
-            this.setState({ seeking: false, mouseX: null, mouseY: null });
+            this.setState({ seeking: false });
         }
     }
 
@@ -151,6 +164,39 @@ export class Scrubber extends Component<ScrubberProps> {
             }
             this.setState({ hover: false, seeking: false, touchX: null, touchY: null, touchId: null });
         }
+    }
+
+    renderTooltip = () => {
+        const { tooltip, vertical } = this.props;
+        if (!tooltip) {
+            return;
+        }
+
+        const isInHover = !this.state.seeking && this.state.hover;
+        const isInSeeking = this.state.seeking;
+
+        const shouldRender = isInHover && tooltip?.enabledOnHover || isInSeeking && tooltip?.enabledOnScrub;
+        if (!shouldRender) {
+            return;
+        }
+
+        let className = 'bar__tooltip';
+        if (tooltip.className) {
+            className = `${className} ${tooltip.className}`;
+        }
+
+        const value = this.getPositionFromCursor();
+        const valuePercent = this.getValuePercent(value);
+
+        const text = tooltip.formatString ? tooltip.formatString(value) : value.toFixed().toString();
+        return (
+            <div className={className} style={{ [vertical ? 'bottom' : 'left']: `${valuePercent}%` }}>
+                <div className="bar__tooltip-text">
+                    {text}
+                </div>
+                <div className="bar__tooltip-arrow" />
+            </div>
+        );
     }
 
     renderMarkers = () => {
@@ -224,6 +270,8 @@ export class Scrubber extends Component<ScrubberProps> {
             'onScrubStart',
             'onScrubEnd',
             'onScrubChange',
+            'onHover',
+            'tooltip',
             'markers',
         ];
 
@@ -244,6 +292,7 @@ export class Scrubber extends Component<ScrubberProps> {
                     {this.renderMarkers()}
                     <div className="bar__progress" style={{ [vertical ? 'height' : 'width']: `${valuePercent}%` }} />
                     <div className="bar__thumb" style={{ [vertical ? 'bottom' : 'left']: `${valuePercent}%` }} />
+                    {this.renderTooltip()}
                 </div>
             </div>
         );

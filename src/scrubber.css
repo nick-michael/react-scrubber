@@ -86,3 +86,42 @@
 .scrubber.vertical .bar__marker {
   height: 12px;
 }
+
+.scrubber .bar__tooltip {
+  position: absolute;
+  padding: 2px 8px;
+  background: rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+.scrubber.horizontal .bar__tooltip {
+  transform: translate(-50%, calc(-100% - 12px));
+}
+
+.scrubber.horizontal .bar__tooltip-arrow {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgba(0, 0, 0, 0.6);
+}
+
+.scrubber.vertical .bar__tooltip {
+  transform: translate(calc(-100% - 12px), 50%);
+}
+
+.scrubber.vertical .bar__tooltip-arrow {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 6px solid rgba(0, 0, 0, 0.6);
+}
