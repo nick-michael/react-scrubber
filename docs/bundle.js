@@ -173,7 +173,8 @@ var Scrubber = /** @class */ (function (_super) {
             }
             var _a = _this.props, min = _a.min, max = _a.max;
             var _b = _this.state, mouseX = _b.mouseX, touchX = _b.touchX;
-            var _c = barDomNode.getBoundingClientRect(), left = _c.left, width = _c.width;
+            var _c = barDomNode.getBoundingClientRect(), elementLeft = _c.left, width = _c.width;
+            var left = elementLeft + window.scrollX;
             var cursor = typeof touchX === 'number' ? touchX : mouseX || 0;
             var clamped = clamp(left, left + width, cursor);
             var decimal = round((clamped - left) / width, 7);
@@ -186,8 +187,9 @@ var Scrubber = /** @class */ (function (_super) {
             }
             var _a = _this.props, min = _a.min, max = _a.max;
             var _b = _this.state, mouseY = _b.mouseY, touchY = _b.touchY;
-            var _c = barDomNode.getBoundingClientRect(), bottom = _c.bottom, height = _c.height;
+            var _c = barDomNode.getBoundingClientRect(), elementBottom = _c.bottom, height = _c.height;
             var cursor = typeof touchY === 'number' ? touchY : mouseY || 0;
+            var bottom = elementBottom + window.scrollY;
             var clamped = clamp(bottom - height, bottom, cursor);
             var decimal = round((bottom - clamped) / height, 7);
             return round((max - min) * decimal, 7) + min;
@@ -196,10 +198,32 @@ var Scrubber = /** @class */ (function (_super) {
             var vertical = _this.props.vertical;
             return vertical ? _this.getPositionFromMouseY() : _this.getPositionFromMouseX();
         };
+        _this.handleMouseOver = function (e) {
+            _this.setState({ mouseX: e.pageX, mouseY: e.pageY, hover: true }, function () {
+                if (_this.props.onMouseOver) {
+                    _this.props.onMouseOver(_this.getPositionFromCursor());
+                }
+            });
+        };
+        _this.handleMouseLeave = function (e) {
+            _this.setState({ mouseX: e.pageX, mouseY: e.pageY, hover: false }, function () {
+                if (_this.props.onMouseLeave) {
+                    _this.props.onMouseLeave(_this.getPositionFromCursor());
+                }
+            });
+        };
         _this.handleMouseMove = function (e) {
             _this.setState({ mouseX: e.pageX, mouseY: e.pageY }, function () {
+                var position = undefined;
+                if (_this.state.hover && _this.props.onMouseMove) {
+                    position = _this.getPositionFromCursor();
+                    _this.props.onMouseMove(position);
+                }
                 if (_this.state.seeking && _this.props.onScrubChange) {
-                    _this.props.onScrubChange(_this.getPositionFromCursor());
+                    if (position === undefined) {
+                        position = _this.getPositionFromCursor();
+                    }
+                    _this.props.onScrubChange(position);
                 }
             });
         };
@@ -236,7 +260,7 @@ var Scrubber = /** @class */ (function (_super) {
                 if (_this.props.onScrubEnd) {
                     _this.props.onScrubEnd(_this.getPositionFromCursor());
                 }
-                _this.setState({ seeking: false, mouseX: null, mouseY: null });
+                _this.setState({ seeking: false });
             }
         };
         _this.handleTouchEnd = function (e) {
@@ -247,6 +271,29 @@ var Scrubber = /** @class */ (function (_super) {
                 }
                 _this.setState({ hover: false, seeking: false, touchX: null, touchY: null, touchId: null });
             }
+        };
+        _this.renderTooltip = function () {
+            var _a;
+            var _b = _this.props, tooltip = _b.tooltip, vertical = _b.vertical;
+            if (!tooltip) {
+                return;
+            }
+            var isInHover = !_this.state.seeking && _this.state.hover;
+            var isInSeeking = _this.state.seeking;
+            var shouldRender = isInHover && (tooltip === null || tooltip === void 0 ? void 0 : tooltip.enabledOnHover) || isInSeeking && (tooltip === null || tooltip === void 0 ? void 0 : tooltip.enabledOnScrub);
+            if (!shouldRender) {
+                return;
+            }
+            var className = 'bar__tooltip';
+            if (tooltip.className) {
+                className = className + " " + tooltip.className;
+            }
+            var value = _this.getPositionFromCursor();
+            var valuePercent = _this.getValuePercent(value);
+            var text = tooltip.formatString ? tooltip.formatString(value) : value.toFixed().toString();
+            return (react_1.default.createElement("div", { className: className, style: (_a = {}, _a[vertical ? 'bottom' : 'left'] = valuePercent + "%", _a) },
+                react_1.default.createElement("div", { className: "bar__tooltip-text" }, text),
+                react_1.default.createElement("div", { className: "bar__tooltip-arrow" })));
         };
         _this.renderMarkers = function () {
             var _a = _this.props, vertical = _a.vertical, markers = _a.markers;
@@ -309,7 +356,6 @@ var Scrubber = /** @class */ (function (_super) {
     };
     Scrubber.prototype.render = function () {
         var _a, _b, _c;
-        var _this = this;
         var _d = this.props, className = _d.className, value = _d.value, _e = _d.bufferPosition, bufferPosition = _e === void 0 ? 0 : _e, vertical = _d.vertical;
         var valuePercent = this.getValuePercent(value);
         var bufferPercent = this.getValuePercent(bufferPosition);
@@ -330,15 +376,20 @@ var Scrubber = /** @class */ (function (_super) {
             'onScrubStart',
             'onScrubEnd',
             'onScrubChange',
+            'onMouseMove',
+            'onMouseOver',
+            'onMouseLeave',
+            'tooltip',
             'markers',
         ];
         var customProps = filter(this.props, function (key) { return !propsKeys.includes(key); });
-        return (react_1.default.createElement("div", __assign({ onMouseDown: this.handleSeekStart, onTouchStart: this.handleTouchStart, onTouchEnd: function (e) { return e.preventDefault(); }, onMouseOver: function () { return _this.setState({ hover: true }); }, onMouseLeave: function () { return _this.setState({ hover: false }); } }, customProps, { className: classes.join(' ') }),
+        return (react_1.default.createElement("div", __assign({ onMouseDown: this.handleSeekStart, onTouchStart: this.handleTouchStart, onTouchEnd: function (e) { return e.preventDefault(); }, onMouseOver: this.handleMouseOver, onMouseLeave: this.handleMouseLeave }, customProps, { className: classes.join(' ') }),
             react_1.default.createElement("div", { className: "bar", ref: this.barRef },
                 react_1.default.createElement("div", { className: "bar__buffer", style: (_a = {}, _a[vertical ? 'height' : 'width'] = bufferPercent + "%", _a) }),
                 this.renderMarkers(),
                 react_1.default.createElement("div", { className: "bar__progress", style: (_b = {}, _b[vertical ? 'height' : 'width'] = valuePercent + "%", _b) }),
-                react_1.default.createElement("div", { className: "bar__thumb", style: (_c = {}, _c[vertical ? 'bottom' : 'left'] = valuePercent + "%", _c) }))));
+                react_1.default.createElement("div", { className: "bar__thumb", style: (_c = {}, _c[vertical ? 'bottom' : 'left'] = valuePercent + "%", _c) }),
+                this.renderTooltip())));
     };
     return Scrubber;
 }(react_1.Component));
@@ -6577,7 +6628,7 @@ if (false) {} else {
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../demo/node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
 exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
-exports.push([module.i, ".scrubber {\n  width: 100%;\n  height: 100%;\n  position: relative;\n  user-select: none;\n  touch-action: none;\n}\n.scrubber * {\n  user-select: none;\n}\n.scrubber .bar {\n  background: rgba(100, 100, 100, 0.5);\n  position: relative;\n  transition: height 0.2s linear, width 0.2s linear;\n}\n.scrubber.horizontal .bar {\n  top: 50%;\n  left: 0;\n  transform: translateY(-50%);\n  height: 4px;\n  width: 100%;\n}\n.scrubber.vertical .bar {\n  top: 0;\n  left: 50%;\n  transform: translateX(-50%);\n  width: 4px;\n  height: 100%;\n}\n.scrubber .bar__progress {\n  position: absolute;\n  background: #019afd;\n}\n.scrubber .bar__buffer {\n  position: absolute;\n  background: rgba(170, 170, 170, 0.6);\n}\n.scrubber.horizontal .bar__progress,\n.scrubber.horizontal .bar__marker,\n.scrubber.horizontal .bar__buffer {\n  height: 100%;\n}\n.scrubber.vertical .bar__progress,\n.scrubber.vertical .bar__marker,\n.scrubber.vertical .bar__buffer {\n  width: 100%;\n  bottom: 0;\n}\n.scrubber .bar__thumb {\n  position: absolute;\n  width: 0px;\n  height: 0px;\n  border-radius: 10px;\n  background: #019afd;\n  transition: height 0.2s linear, width 0.2s linear;\n}\n.scrubber.horizontal .bar__thumb {\n  transform: translate(-50%, -50%);\n  top: 50%;\n}\n.scrubber.vertical .bar__thumb {\n  transform: translate(-50%, 50%);\n  left: 50%;\n}\n.scrubber.hover.horizontal .bar {\n  height: 6px;\n}\n.scrubber.hover.vertical .bar {\n  width: 6px;\n}\n.scrubber.hover .bar__thumb {\n  width: 12px;\n  height: 12px;\n}\n\n.scrubber .bar__marker {\n  position: absolute;\n  background: rgb(240, 205, 5);\n  z-index: 1;\n}\n\n.scrubber.horizontal .bar__marker {\n  width: 12px;\n}\n\n.scrubber.vertical .bar__marker {\n  height: 12px;\n}\n", ""]);
+exports.push([module.i, ".scrubber {\n  width: 100%;\n  height: 100%;\n  position: relative;\n  user-select: none;\n  touch-action: none;\n}\n.scrubber * {\n  user-select: none;\n}\n.scrubber .bar {\n  background: rgba(100, 100, 100, 0.5);\n  position: relative;\n  transition: height 0.2s linear, width 0.2s linear;\n}\n.scrubber.horizontal .bar {\n  top: 50%;\n  left: 0;\n  transform: translateY(-50%);\n  height: 4px;\n  width: 100%;\n}\n.scrubber.vertical .bar {\n  top: 0;\n  left: 50%;\n  transform: translateX(-50%);\n  width: 4px;\n  height: 100%;\n}\n.scrubber .bar__progress {\n  position: absolute;\n  background: #019afd;\n}\n.scrubber .bar__buffer {\n  position: absolute;\n  background: rgba(170, 170, 170, 0.6);\n}\n.scrubber.horizontal .bar__progress,\n.scrubber.horizontal .bar__marker,\n.scrubber.horizontal .bar__buffer {\n  height: 100%;\n}\n.scrubber.vertical .bar__progress,\n.scrubber.vertical .bar__marker,\n.scrubber.vertical .bar__buffer {\n  width: 100%;\n  bottom: 0;\n}\n.scrubber .bar__thumb {\n  position: absolute;\n  width: 0px;\n  height: 0px;\n  border-radius: 10px;\n  background: #019afd;\n  transition: height 0.2s linear, width 0.2s linear;\n}\n.scrubber.horizontal .bar__thumb {\n  transform: translate(-50%, -50%);\n  top: 50%;\n}\n.scrubber.vertical .bar__thumb {\n  transform: translate(-50%, 50%);\n  left: 50%;\n}\n.scrubber.hover.horizontal .bar {\n  height: 6px;\n}\n.scrubber.hover.vertical .bar {\n  width: 6px;\n}\n.scrubber.hover .bar__thumb {\n  width: 12px;\n  height: 12px;\n}\n\n.scrubber .bar__marker {\n  position: absolute;\n  background: rgb(240, 205, 5);\n  z-index: 1;\n}\n\n.scrubber.horizontal .bar__marker {\n  width: 12px;\n}\n\n.scrubber.vertical .bar__marker {\n  height: 12px;\n}\n\n.scrubber .bar__tooltip {\n  position: absolute;\n  padding: 2px 8px;\n  background: rgba(0, 0, 0, 0.6);\n  pointer-events: none;\n}\n\n.scrubber.horizontal .bar__tooltip {\n  transform: translate(-50%, calc(-100% - 12px));\n}\n\n.scrubber.horizontal .bar__tooltip-arrow {\n  position: absolute;\n  top: 100%;\n  left: 50%;\n  transform: translateX(-50%);\n  width: 0;\n  height: 0;\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-top: 6px solid rgba(0, 0, 0, 0.6);\n}\n\n.scrubber.vertical .bar__tooltip {\n  transform: translate(calc(-100% - 12px), 50%);\n}\n\n.scrubber.vertical .bar__tooltip-arrow {\n  position: absolute;\n  left: 100%;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 0;\n  height: 0;\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  border-left: 6px solid rgba(0, 0, 0, 0.6);\n}", ""]);
 // Exports
 module.exports = exports;
 
@@ -6595,7 +6646,7 @@ module.exports = exports;
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
 exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
-exports.push([module.i, "body {\n    font-family: sans-serif;\n    background: #242424;\n    color: #AAA;\n}\n\ncode {\n    background: #3F3F3F;\n    padding: 2px 4px;\n    border-radius: 4px;\n    line-height: 1.8em;\n}\n\ncode.codeblock {\n    white-space: pre-wrap;\n    display: block;\n    line-height: initial;\n}\n\n.title {\n    text-align: center;\n}\n\n.github-link {\n    text-align: center;\n    text-decoration: none;\n    color: #019AFD;\n    font-weight: bolder;\n    display: block;\n    margin-top: 20px;\n}\n\n.content-container {\n    max-width: 700px;\n    width: 80%;\n    margin: auto;\n}\n\n.description {\n    margin-bottom: 10px;\n}\n\n.block {\n    padding: 15px;\n    border: 3px solid #666;\n    margin: 20px 0;\n}\n\n.scrubber .bar {\n    top: 50%;\n}\n\n.scrubber.labelled .bar, .scrubber.labelled.hover .bar {\n    height: 40px;\n}\n\n.scrubber.labelled .bar::before {\n    position: absolute;\n    bottom: -40px;\n    font-size: 16px;\n    right: 10%;\n    height: 50px;\n    padding-right: 6px;\n    content: '.bar';\n    border-right: 2px solid #666;\n    line-height: 0.8;\n    display: flex;\n    align-items: flex-end;\n}\n\n.scrubber.labelled .bar__thumb {\n    width: 60px;\n    height: 60px;\n    border-radius: 30px;\n}\n\n.scrubber.labelled .bar::after {\n    position: absolute;\n    bottom: -40px;\n    font-size: 16px;\n    right: 60%;\n    height: 50px;\n    padding-right: 6px;\n    content: '.bar__thumb';\n    border-right: 2px solid #666;\n    line-height: 0.8;\n    display: flex;\n    align-items: flex-end;\n}\n\n.scrubber.labelled .bar__buffer::before {\n    position: absolute;\n    bottom: -40px;\n    font-size: 16px;\n    right: 10%;\n    height: 50px;\n    padding-right: 6px;\n    content: '.bar__buffer';\n    border-right: 2px solid #666;\n    line-height: 0.8;\n    display: flex;\n    align-items: flex-end;\n}\n\n.scrubber.labelled .bar__progress::before {\n    position: absolute;\n    bottom: -40px;\n    font-size: 16px;\n    right: 50%;\n    height: 50px;\n    padding-right: 6px;\n    content: '.bar__progress';\n    border-right: 2px solid #666;\n    line-height: 0.8;\n    display: flex;\n    align-items: flex-end;\n}\n\n.data {\n    display: grid;\n    grid-template-columns: 50% 50%;\n    text-align: center;\n    margin: 10px 0;\n}\n\n.scrubber .bar__marker.type-1 {\n    background: #ED269D;\n}\n\n.scrubber .bar__marker.type-2 {\n    background: #004A09;\n}\n", ""]);
+exports.push([module.i, "body {\n    font-family: sans-serif;\n    background: #242424;\n    color: #AAA;\n}\n\ncode {\n    background: #3F3F3F;\n    padding: 2px 4px;\n    border-radius: 4px;\n    line-height: 1.8em;\n}\n\ncode.codeblock {\n    white-space: pre-wrap;\n    display: block;\n    line-height: initial;\n}\n\n.title {\n    text-align: center;\n}\n\n.github-link {\n    text-align: center;\n    text-decoration: none;\n    color: #019AFD;\n    font-weight: bolder;\n    display: block;\n    margin-top: 20px;\n}\n\n.content-container {\n    max-width: 700px;\n    width: 80%;\n    margin: auto;\n}\n\n.description {\n    margin-bottom: 10px;\n}\n\n.block {\n    padding: 15px;\n    border: 3px solid #666;\n    margin: 20px 0;\n}\n\n.scrubber .bar {\n    top: 50%;\n}\n\n.scrubber.labelled .bar, .scrubber.labelled.hover .bar {\n    height: 40px;\n}\n\n.scrubber.labelled .bar::before {\n    position: absolute;\n    bottom: -40px;\n    font-size: 16px;\n    right: 10%;\n    height: 50px;\n    padding-right: 6px;\n    content: '.bar';\n    border-right: 2px solid #666;\n    line-height: 0.8;\n    display: flex;\n    align-items: flex-end;\n}\n\n.scrubber.labelled .bar__thumb {\n    width: 60px;\n    height: 60px;\n    border-radius: 30px;\n}\n\n.scrubber.labelled .bar::after {\n    position: absolute;\n    bottom: -40px;\n    font-size: 16px;\n    right: 60%;\n    height: 50px;\n    padding-right: 6px;\n    content: '.bar__thumb';\n    border-right: 2px solid #666;\n    line-height: 0.8;\n    display: flex;\n    align-items: flex-end;\n}\n\n.scrubber.labelled .bar__buffer::before {\n    position: absolute;\n    bottom: -40px;\n    font-size: 16px;\n    right: 10%;\n    height: 50px;\n    padding-right: 6px;\n    content: '.bar__buffer';\n    border-right: 2px solid #666;\n    line-height: 0.8;\n    display: flex;\n    align-items: flex-end;\n}\n\n.scrubber.labelled .bar__progress::before {\n    position: absolute;\n    bottom: -40px;\n    font-size: 16px;\n    right: 50%;\n    height: 50px;\n    padding-right: 6px;\n    content: '.bar__progress';\n    border-right: 2px solid #666;\n    line-height: 0.8;\n    display: flex;\n    align-items: flex-end;\n}\n\n.data {\n    display: grid;\n    grid-template-columns: 33% 33% 33%;\n    text-align: center;\n    margin: 10px 0;\n    text-transform: capitalize;\n}\n\n.scrubber .bar__marker.type-1 {\n    background: #ED269D;\n}\n\n.scrubber .bar__marker.type-2 {\n    background: #004A09;\n}\n", ""]);
 // Exports
 module.exports = exports;
 
@@ -36888,6 +36939,7 @@ class App extends react_1.Component {
         this.state = {
             value: 50,
             state: 'None',
+            hovering: false,
         };
         this.handleScrubStart = (value) => {
             this.setState({ value, state: 'Scrub Start' });
@@ -36898,6 +36950,12 @@ class App extends react_1.Component {
         this.handleScrubChange = (value) => {
             this.setState({ value, state: 'Scrub Change' });
         };
+        this.handleMouseMove = (value) => {
+            this.setState({ hovering: value });
+        };
+        this.handleMouseLeave = (value) => {
+            this.setState({ hovering: false });
+        };
     }
     render() {
         return (react_1.default.createElement("div", null,
@@ -36905,19 +36963,33 @@ class App extends react_1.Component {
             react_1.default.createElement("h1", { className: "title" }, "Welcome To React Scrubber!"),
             react_1.default.createElement("div", { className: "content-container" },
                 react_1.default.createElement("div", { className: "scrubber-container", style: { height: '20px' } },
-                    react_1.default.createElement(react_scrubber_1.Scrubber, { min: 0, max: 100, value: this.state.value, onScrubStart: this.handleScrubStart, onScrubEnd: this.handleScrubEnd, onScrubChange: this.handleScrubChange })),
+                    react_1.default.createElement(react_scrubber_1.Scrubber, { min: 0, max: 100, value: this.state.value, onScrubStart: this.handleScrubStart, onScrubEnd: this.handleScrubEnd, onScrubChange: this.handleScrubChange, onMouseMove: this.handleMouseMove, onMouseLeave: this.handleMouseLeave })),
                 react_1.default.createElement("div", { className: "data" },
                     react_1.default.createElement("div", { className: "data__state" },
                         "State: ",
                         this.state.state),
                     react_1.default.createElement("div", { className: "data__value" },
                         "Value: ",
-                        this.state.value)),
+                        this.state.value),
+                    react_1.default.createElement("div", { className: "data__value" },
+                        "Hovering: ",
+                        `${this.state.hovering}`)),
                 react_1.default.createElement("br", null),
                 react_1.default.createElement("div", { className: "block" },
                     react_1.default.createElement("div", { className: "description" }, "The scrubber has default styling applied to it, here's what it looks like to start with!"),
                     react_1.default.createElement("div", { className: "scrubber-container", style: { height: '20px' } },
                         react_1.default.createElement(react_scrubber_1.Scrubber, { min: 0, max: 100, value: 40 }))),
+                react_1.default.createElement("div", { className: "block" },
+                    react_1.default.createElement("div", { className: "description" },
+                        "You can render a tooltip by passing options in the ",
+                        react_1.default.createElement("code", null, "\"tooltip\""),
+                        " prop"),
+                    react_1.default.createElement("br", null),
+                    react_1.default.createElement("div", { className: "scrubber-container", style: { height: '20px' } },
+                        react_1.default.createElement(react_scrubber_1.Scrubber, { min: 0, max: 100, value: 40, tooltip: {
+                                enabledOnHover: true,
+                                enabledOnScrub: true,
+                            } }))),
                 react_1.default.createElement("div", { className: "block" },
                     react_1.default.createElement("div", { className: "description" },
                         "The scrubber will fill the width of it's container by default. The scrubber will also fill the height of it's container, but this will only be noticable for hover & click detection, ",
@@ -36975,7 +37047,10 @@ class App extends react_1.Component {
                         " prop."),
                     react_1.default.createElement("div", { style: { display: 'inline-block', width: '150px', verticalAlign: 'middle' } },
                         react_1.default.createElement("div", { className: "scrubber-container", style: { height: '80px', width: '20px', margin: 'auto' } },
-                            react_1.default.createElement(react_scrubber_1.Scrubber, { vertical: true, min: 0, max: 100, value: 40 }))),
+                            react_1.default.createElement(react_scrubber_1.Scrubber, { vertical: true, min: 0, max: 100, value: 40, tooltip: {
+                                    enabledOnHover: true,
+                                    enabledOnScrub: true,
+                                } }))),
                     react_1.default.createElement("br", null)))));
     }
 }

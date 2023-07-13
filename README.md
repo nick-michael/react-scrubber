@@ -61,6 +61,9 @@ class App extends Component {
 | onScrubStart | function | No | Called on mouse down or touch down
 | onScrubEnd | function | No | Called on mouse up or touch up while scrubbing
 | onScrubChange | function | No | Called on mouse move while scrubbing
+| onMouseMove | function | No | Called with the scrub value of the cursor position when the mouse moves inside the scrubber element
+| onMouseOver | function | No | Called with the scrub value of the cursor position when the mouse enters scrubber element
+| onMouseLeave | function | No | Called with the scrub value of the cursor position when the mouse leaves scrubber element
 | markers | Array<number \| { start: number, end?: number, className?: string }> | No | Adds yellow indicators to the scrubber bar
 | tooltip | {<br /> &emsp;enabledOnHover?: boolean;<br /> &emsp;enabledOnScrub?: boolean;<br /> &emsp;className?: string;<br /> &emsp;formatString?: (value: number) => string;<br/>} | No | Renders a tooltip while hovering/scrubbing
 | custom props | any | No | Any other props will be applied to the outermost 'scrubber' div

@@ -9,6 +9,7 @@ class App extends Component {
     state = {
         value: 50,
         state: 'None',
+        hovering: false,
     }
 
     handleScrubStart = (value: number) => {
@@ -21,6 +22,14 @@ class App extends Component {
 
     handleScrubChange = (value: number) => {
         this.setState({ value, state: 'Scrub Change' });
+    }
+
+    handleMouseMove = (value: number) => {
+        this.setState({ hovering: value });
+    }
+
+    handleMouseLeave = (value: number) => {
+        this.setState({ hovering: false });
     }
 
     render() {
@@ -39,11 +48,14 @@ class App extends Component {
                             onScrubStart={this.handleScrubStart}
                             onScrubEnd={this.handleScrubEnd}
                             onScrubChange={this.handleScrubChange}
+                            onMouseMove={this.handleMouseMove}
+                            onMouseLeave={this.handleMouseLeave}
                         />
                     </div>
                     <div className="data">
                         <div className="data__state">State: {this.state.state}</div>
                         <div className="data__value">Value: {this.state.value}</div>
+                        <div className="data__value">Hovering: {`${this.state.hovering}`}</div>
                     </div>
                     <br />
                     <div className="block">

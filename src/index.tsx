@@ -26,7 +26,9 @@ export type ScrubberProps = {
     onScrubStart?: (value: number) => void;
     onScrubEnd?: (value: number) => void;
     onScrubChange?: (value: number) => void;
-    onHover?: (value: number) => void;
+    onMouseMove?: (value: number) => void;
+    onMouseOver?: (value: number) => void;
+    onMouseLeave?: (value: number) => void;
     tooltip?: Tooltip;
     markers?: Array<number | Marker>;
     [key: string]: any;
@@ -105,12 +107,35 @@ export class Scrubber extends Component<ScrubberProps> {
         return vertical ? this.getPositionFromMouseY() : this.getPositionFromMouseX();
     }
 
+    handleMouseOver = (e: MouseEvent) => {
+        this.setState({ mouseX: e.pageX, mouseY: e.pageY, hover: true }, () => {    
+            if (this.props.onMouseOver) {
+                this.props.onMouseOver(this.getPositionFromCursor());
+            }
+        });
+    }
+
+    handleMouseLeave = (e: MouseEvent) => {
+        this.setState({ mouseX: e.pageX, mouseY: e.pageY, hover: false }, () => {    
+            if (this.props.onMouseLeave) {
+                this.props.onMouseLeave(this.getPositionFromCursor());
+            }
+        });
+    }
+
     handleMouseMove = (e: MouseEvent) => {
-        this.setState({ mouseX: e.pageX, mouseY: e.pageY }, () => {
+        this.setState({ mouseX: e.pageX, mouseY: e.pageY }, () => {   
+            let position: number | undefined = undefined;         
+            if (this.state.hover && this.props.onMouseMove) {
+                position = this.getPositionFromCursor();
+                this.props.onMouseMove(position);
+            }
+
             if (this.state.seeking && this.props.onScrubChange) {
-                this.props.onScrubChange(this.getPositionFromCursor());
-            } else if (this.state.hover && this.props.onHover) {
-                this.props.onHover(this.getPositionFromCursor());
+                if (position === undefined) {
+                    position = this.getPositionFromCursor();
+                }
+                this.props.onScrubChange(position);
             }
         });
     }
@@ -270,7 +295,9 @@ export class Scrubber extends Component<ScrubberProps> {
             'onScrubStart',
             'onScrubEnd',
             'onScrubChange',
-            'onHover',
+            'onMouseMove',
+            'onMouseOver',
+            'onMouseLeave',
             'tooltip',
             'markers',
         ];
@@ -282,8 +309,8 @@ export class Scrubber extends Component<ScrubberProps> {
                 onMouseDown={this.handleSeekStart}
                 onTouchStart={this.handleTouchStart}
                 onTouchEnd={e => e.preventDefault()}
-                onMouseOver={() => this.setState({ hover: true })}
-                onMouseLeave={() => this.setState({ hover: false })}
+                onMouseOver={this.handleMouseOver}
+                onMouseLeave={this.handleMouseLeave}
                 {...customProps}
                 className={classes.join(' ')}
             >

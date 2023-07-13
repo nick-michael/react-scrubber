@@ -1,6 +1,6 @@
 {
     "name": "react-scrubber",
-    "version": "1.2.0",
+    "version": "2.0.0",
     "description": "React scrubber component with touch controls, styling, and lots event handlers",
     "main": "./lib/index.js",
     "scripts": {
@@ -27,7 +27,6 @@
         "url": "https://github.com/nick-michael/react-scrubber/issues"
     },
     "files": [
-        "src",
         "lib"
     ],
     "homepage": "https://github.com/nick-michael/react-scrubber#readme",
