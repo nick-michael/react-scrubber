@@ -1,7 +1,7 @@
-const childProcess = require('child_process');
+import { copyByFileType } from './copy-by-file-type.js';
 
 function copyCssToLib() {
-    childProcess.execSync("find ./src -name '*.css' -type f -exec cp -P {} ./lib \\;");
+    copyByFileType('css', './src', './lib');
 }
 
 copyCssToLib();

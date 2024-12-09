@@ -2,7 +2,7 @@
     "name": "react-scrubber-demo",
     "scripts": {
         "start": "webpack-dev-server",
-        "docs": "webpack -o ../docs/bundle.js && node copy-to-docs.js"
+        "docs": "webpack -o ../docs && node copy-to-docs.js"
     },
     "devDependencies": {
         "@types/react": "19.0.0",
