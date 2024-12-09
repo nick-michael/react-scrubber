@@ -1,4 +1,5 @@
-const childProcess = require('child_process');
+import childProcess from 'child_process';
+import { copyByFileType } from '../copy-by-file-type.js';
 
-childProcess.execSync("find ./src -name '*.css' -type f -exec cp -P {} ../docs \;");
+copyByFileType('css', './src', '../docs');
 childProcess.execSync("cp index.html ../docs");
